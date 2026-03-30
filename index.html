@@ -3,871 +3,219 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LandChain | Blockchain Land Registry</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>LandChain OS | Decentalized Registry</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            min-height: 100vh;
-            color: #f1f5f9;
-        }
-
-        /* Navigation */
-        .navbar {
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            padding: 1rem 2rem;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .nav-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-
-        .logo i {
-            font-size: 2rem;
-            color: #3b82f6;
-        }
-
-        .logo span {
-            background: linear-gradient(135deg, #60a5fa, #3b82f6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .wallet-section {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .network-badge {
-            background: rgba(59,130,246,0.2);
-            padding: 8px 16px;
-            border-radius: 12px;
-            font-size: 0.875rem;
-            border: 1px solid rgba(59,130,246,0.3);
-        }
-
-        .wallet-btn {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            border: none;
-            padding: 10px 24px;
-            border-radius: 12px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .wallet-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px -5px rgba(59,130,246,0.4);
-        }
-
-        .connected {
-            background: rgba(34,197,94,0.2);
-            border: 1px solid rgba(34,197,94,0.3);
-            padding: 8px 20px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        /* Main Container */
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        /* Stats Cards */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: rgba(255,255,255,0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 1.5rem;
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: all 0.3s;
-        }
-
-        .stat-card:hover {
-            border-color: rgba(59,130,246,0.5);
-            transform: translateY(-5px);
-        }
-
-        .stat-title {
-            font-size: 0.875rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #94a3b8;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #60a5fa;
-        }
-
-        /* Tabs */
-        .tabs {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            padding-bottom: 1rem;
-        }
-
-        .tab {
-            padding: 0.75rem 1.5rem;
-            background: transparent;
-            border: none;
-            color: #94a3b8;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            border-radius: 12px;
-        }
-
-        .tab.active {
-            background: rgba(59,130,246,0.2);
-            color: #60a5fa;
-        }
-
-        .tab:hover {
-            color: white;
-        }
-
-        /* Cards */
-        .card {
-            background: rgba(255,255,255,0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 1.5rem;
-            border: 1px solid rgba(255,255,255,0.1);
-            margin-bottom: 1.5rem;
-        }
-
-        .card-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .card-header i {
-            font-size: 1.5rem;
-            color: #3b82f6;
-        }
-
-        .card-header h2 {
-            font-size: 1.25rem;
-            font-weight: 600;
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-size: 0.875rem;
-            color: #94a3b8;
-        }
-
-        input, textarea, select {
-            width: 100%;
-            padding: 12px 16px;
-            background: rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px;
-            color: white;
-            font-size: 0.875rem;
-            transition: all 0.3s;
-        }
-
-        input:focus, textarea:focus {
-            outline: none;
-            border-color: #3b82f6;
-        }
-
-        .btn {
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: none;
-            font-size: 0.875rem;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px -5px rgba(59,130,246,0.4);
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: white;
-        }
-
-        .btn-secondary {
-            background: rgba(255,255,255,0.1);
-            color: white;
-        }
-
-        .grid-2 {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
-        }
-
-        /* Land Items */
-        .land-item {
-            background: rgba(0,0,0,0.3);
-            border-radius: 16px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border-left: 4px solid #3b82f6;
-            transition: all 0.3s;
-        }
-
-        .land-item:hover {
-            transform: translateX(5px);
-        }
-
-        .land-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.75rem;
-        }
-
-        .land-id {
-            font-weight: 700;
-            color: #3b82f6;
-        }
-
-        .land-price {
-            font-weight: 600;
-            color: #10b981;
-        }
-
-        .land-details {
-            font-size: 0.875rem;
-            color: #94a3b8;
-        }
-
-        /* Alerts */
-        .alert {
-            padding: 1rem;
-            border-radius: 12px;
-            margin-bottom: 1rem;
-            display: none;
-            animation: slideIn 0.3s ease;
-        }
-
-        .alert-success {
-            background: rgba(34,197,94,0.2);
-            border: 1px solid rgba(34,197,94,0.3);
-            color: #4ade80;
-        }
-
-        .alert-error {
-            background: rgba(239,68,68,0.2);
-            border: 1px solid rgba(239,68,68,0.3);
-            color: #f87171;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateY(-20px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 0.6s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .grid-2 {
-                grid-template-columns: 1fr;
-            }
-            .navbar {
-                padding: 1rem;
-            }
-            .container {
-                padding: 1rem;
-            }
-        }
-
-        /* Contract Address */
-        .contract-address {
-            background: rgba(0,0,0,0.3);
-            padding: 0.75rem;
-            border-radius: 12px;
-            font-family: monospace;
-            font-size: 0.75rem;
-            text-align: center;
-            margin-top: 1rem;
-        }
-    </style>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo">
-                <i class="fas fa-landmark"></i>
-                <span>LandChain</span>
+    <div id="toastContainer" class="terminal-toast-container"></div>
+
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon"><i class="fas fa-layer-group"></i></div>
+            <span class="brand-name">LANDCHAIN OS</span>
+        </div>
+
+        <nav>
+            <ul class="nav-menu">
+                <li class="nav-item active" onclick="showTab('register')">
+                    <i class="fas fa-plus-square"></i>
+                    <span>Register</span>
+                </li>
+                <li class="nav-item" onclick="showTab('marketplace')">
+                    <i class="fas fa-store"></i>
+                    <span>Marketplace</span>
+                </li>
+                <li class="nav-item" onclick="showTab('mylands')">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Portfolio</span>
+                </li>
+                <li class="nav-item" onclick="showTab('transfer')">
+                    <i class="fas fa-paper-plane"></i>
+                    <span>Transfer</span>
+                </li>
+            </ul>
+        </nav>
+
+        <div style="margin-top: auto;">
+            <div class="network-badge">
+                <i class="fas fa-circle" style="font-size: 0.5rem;"></i>
+                Hardhat Local
             </div>
-            <div class="wallet-section">
-                <div class="network-badge">
-                    <i class="fas fa-network-wired"></i> Hardhat Local
-                </div>
+        </div>
+    </aside>
+
+    <main class="main-wrapper">
+        <header>
+            <div class="page-title">
+                <h1 id="activeTabTitle">Property Registry</h1>
+                <p id="activeTabDesc">Securely record and manage your land titles on the blockchain.</p>
+            </div>
+
+            <div class="user-status">
                 <div id="walletInfo">
-                    <button class="wallet-btn" onclick="connectWallet()">
-                        <i class="fas fa-wallet"></i> Connect Wallet
-                    </button>
+                    <div class="wallet-box" onclick="connectWallet()">
+                        <i class="fas fa-wallet" style="color: var(--accent-primary);"></i>
+                        <span>Connect Secure Wallet</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Stats Overview -->
+        <div class="stats-row">
+            <div class="stat-widget" title="Total properties registered in the system">
+                <span class="stat-label">Network Total</span>
+                <div class="stat-value" id="totalLands">00</div>
+            </div>
+            <div class="stat-widget" title="Properties owned by your connected wallet">
+                <span class="stat-label">Your Properties</span>
+                <div class="stat-value" id="yourLands">00</div>
+            </div>
+            <div class="stat-widget" title="Properties currently listed for sale">
+                <span class="stat-label">Market Listings</span>
+                <div class="stat-value" id="listedLands">00</div>
+            </div>
+            <div class="stat-widget" title="Current blockchain synchronization status">
+                <span class="stat-label">Sync Status</span>
+                <div class="stat-value" style="font-size: 1.25rem; color: var(--accent-success); display: flex; align-items: center; gap: 0.5rem;">
+                    <div class="status-dot"></div> ONLINE
                 </div>
             </div>
         </div>
-    </nav>
 
-    <div class="container">
-        <div id="alert" class="alert"></div>
-
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-title">Total Lands</div>
-                <div class="stat-value" id="totalLands">0</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-title">Your Lands</div>
-                <div class="stat-value" id="yourLands">0</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-title">Listed for Sale</div>
-                <div class="stat-value" id="listedLands">0</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-title">Network</div>
-                <div class="stat-value" style="font-size: 1rem;">⚡ Active</div>
-            </div>
-        </div>
-
-        <div class="tabs">
-            <button class="tab active" onclick="showTab('register')">
-                <i class="fas fa-plus-circle"></i> Register Land
-            </button>
-            <button class="tab" onclick="showTab('marketplace')">
-                <i class="fas fa-store"></i> Marketplace
-            </button>
-            <button class="tab" onclick="showTab('mylands')">
-                <i class="fas fa-home"></i> My Lands
-            </button>
-            <button class="tab" onclick="showTab('transfer')">
-                <i class="fas fa-exchange-alt"></i> Transfer
-            </button>
-        </div>
-
-        <!-- Register Tab -->
-        <div id="registerTab" class="tab-content">
-            <div class="card">
+        <!-- Content Sections -->
+        <section id="registerTab" class="tab-content">
+            <div class="cyber-card">
                 <div class="card-header">
-                    <i class="fas fa-file-contract"></i>
-                    <h2>Register New Land Parcel</h2>
+                    <h2><i class="fas fa-file-signature"></i> Property Registration</h2>
+                    <p style="font-size: 0.8rem; color: var(--text-dim);"><i class="fas fa-info-circle"></i> Official Registrar authorization required</p>
                 </div>
-                <div class="grid-2">
-                    <div class="form-group">
-                        <label><i class="fas fa-user"></i> Owner Address</label>
-                        <input type="text" id="ownerAddress" placeholder="0x...">
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label>Owner's Wallet Address</label>
+                        <input type="text" id="ownerAddress" class="input-field" placeholder="0x..." readonly>
                     </div>
-                    <div class="form-group">
-                        <label><i class="fas fa-map-marker-alt"></i> Location</label>
-                        <input type="text" id="location" placeholder="Street, City, Country">
+                    <div class="input-group">
+                        <label>Physical Location Details</label>
+                        <input type="text" id="location" class="input-field" placeholder="Address or Coordinates">
                     </div>
-                    <div class="form-group">
-                        <label><i class="fas fa-chart-area"></i> Area (sq meters)</label>
-                        <input type="number" id="area" placeholder="e.g., 500">
+                    <div class="input-group">
+                        <label>Land Area (sq. meters)</label>
+                        <input type="number" id="area" class="input-field" placeholder="e.g. 1500">
                     </div>
-                    <div class="form-group">
-                        <label><i class="fas fa-barcode"></i> Parcel ID</label>
-                        <input type="text" id="parcelId" placeholder="Unique identifier">
+                    <div class="input-group">
+                        <label>Official Parcel ID</label>
+                        <input type="text" id="parcelId" class="input-field" placeholder="Unique legal identifier">
                     </div>
                 </div>
-                <button class="btn btn-primary" onclick="registerLand()" style="width: 100%;">
-                    <i class="fas fa-check-circle"></i> Register Land
+                <button id="registerBtn" class="cyber-btn btn-glow-primary" onclick="registerLand()" style="margin-top: 2rem; width: 100%;">
+                    <i class="fas fa-plus-circle"></i> COMPLETE REGISTRATION
                 </button>
             </div>
-        </div>
+        </section>
 
-        <!-- Marketplace Tab -->
-        <div id="marketplaceTab" class="tab-content" style="display: none;">
-            <div class="grid-2">
-                <div class="card">
+        <section id="marketplaceTab" class="tab-content" style="display: none;">
+            <div class="grid-container">
+                <div class="cyber-card" style="grid-column: span 5;">
                     <div class="card-header">
-                        <i class="fas fa-tag"></i>
-                        <h2>List Land for Sale</h2>
+                        <h2><i class="fas fa-tag"></i> Market Controls</h2>
                     </div>
-                    <div class="form-group">
-                        <label>Token ID</label>
-                        <input type="number" id="listTokenId" placeholder="Enter Token ID">
+                    <div class="input-group" style="margin-bottom: 1.5rem;">
+                        <label>Select Property (Token ID)</label>
+                        <input type="number" id="listTokenId" class="input-field" placeholder="Token #">
                     </div>
-                    <div class="form-group">
-                        <label>Price (ETH)</label>
-                        <input type="number" id="listPrice" placeholder="e.g., 100" step="0.01">
+                    <div class="input-group" style="margin-bottom: 2rem;">
+                        <label>Set Asking Price (ETH)</label>
+                        <input type="number" id="listPrice" class="input-field" placeholder="0.00">
                     </div>
-                    <button class="btn btn-success" onclick="listForSale()" style="width: 100%; margin-bottom: 10px;">
-                        <i class="fas fa-chart-line"></i> List for Sale
-                    </button>
-                    <button class="btn btn-danger" onclick="delistLand()" style="width: 100%;">
-                        <i class="fas fa-ban"></i> Remove Listing
-                    </button>
+                    <div style="display: flex; gap: 1rem;">
+                        <button id="listBtn" class="cyber-btn btn-glow-primary" onclick="listForSale()" style="flex: 1;">LIST FOR SALE</button>
+                        <button id="delistBtn" class="cyber-btn btn-outline" onclick="delistLand()" style="flex: 1;">CANCEL LISTING</button>
+                    </div>
+                    <hr style="margin: 2rem 0; border: 0; border-top: 1px solid rgba(255,255,255,0.05);">
+                    <div class="input-group" style="margin-bottom: 1.5rem;">
+                        <label>Quick Purchase ID</label>
+                        <input type="number" id="buyTokenId" class="input-field" placeholder="Enter Token #">
+                    </div>
+                    <button class="cyber-btn btn-glow-primary" onclick="buyLand()" style="width: 100%;">PURCHASE PROPERTY</button>
                 </div>
 
-                <div class="card">
+                <div class="cyber-card" style="grid-column: span 7;">
                     <div class="card-header">
-                        <i class="fas fa-shopping-cart"></i>
-                        <h2>Buy Land</h2>
+                        <h2><i class="fas fa-list"></i> Market Explorer</h2>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <input type="text" id="marketSearch" class="input-field" placeholder="Search..." style="padding: 0.5rem 1rem; font-size: 0.8rem; width: 150px;" onkeyup="filterMarketplace()">
+                            <select id="marketSort" class="input-field" style="padding: 0.5rem 1rem; font-size: 0.8rem; width: 120px;" onchange="filterMarketplace()">
+                                <option value="newest">Recent</option>
+                                <option value="priceLow">Price ↑</option>
+                                <option value="priceHigh">Price ↓</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Token ID</label>
-                        <input type="number" id="buyTokenId" placeholder="Enter Token ID">
-                    </div>
-                    <button class="btn btn-primary" onclick="buyLand()" style="width: 100%;">
-                        <i class="fas fa-arrow-right"></i> Purchase Land
-                    </button>
+                    <div id="marketplaceList" style="display: grid; gap: 1rem;"></div>
                 </div>
             </div>
-            
-            <div class="card">
-                <div class="card-header">
-                    <i class="fas fa-list"></i>
-                    <h2>Available Lands for Sale</h2>
-                </div>
-                <div id="marketplaceList"></div>
-            </div>
-        </div>
+        </section>
 
-        <!-- My Lands Tab -->
-        <div id="mylandsTab" class="tab-content" style="display: none;">
-            <div class="card">
+        <section id="mylandsTab" class="tab-content" style="display: none;">
+            <div class="cyber-card" style="margin-bottom: 2rem;">
                 <div class="card-header">
-                    <i class="fas fa-home"></i>
-                    <h2>Your Property Portfolio</h2>
+                    <h2><i class="fas fa-briefcase"></i> My Property Portfolio</h2>
                 </div>
-                <div id="myLandsList"></div>
+                <div id="myLandsList" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;"></div>
             </div>
-            
-            <div class="card">
+
+            <div class="cyber-card">
                 <div class="card-header">
-                    <i class="fas fa-search"></i>
-                    <h2>View Land Details</h2>
-                </div>
-                <div class="grid-2">
-                    <div class="form-group">
-                        <label>Token ID</label>
-                        <input type="number" id="viewTokenId" placeholder="Enter Token ID">
+                    <h2><i class="fas fa-search"></i> Property Inspector</h2>
+                    <div style="display: flex; gap: 1rem;">
+                        <input type="number" id="viewTokenId" class="input-field" placeholder="Token #" style="width: 120px;">
+                        <button class="cyber-btn btn-glow-primary" onclick="viewLand()" style="padding: 0.5rem 1.5rem;">VIEW DETAILS</button>
                     </div>
-                    <button class="btn btn-primary" onclick="viewLand()" style="margin-top: 28px;">
-                        <i class="fas fa-eye"></i> View Details
-                    </button>
                 </div>
                 <div id="landDetails"></div>
             </div>
-        </div>
+        </section>
 
-        <!-- Transfer Tab -->
-        <div id="transferTab" class="tab-content" style="display: none;">
-            <div class="card">
+        <section id="transferTab" class="tab-content" style="display: none;">
+            <div class="cyber-card" style="max-width: 600px; margin: 0 auto;">
                 <div class="card-header">
-                    <i class="fas fa-exchange-alt"></i>
-                    <h2>Transfer Ownership</h2>
+                    <h2><i class="fas fa-exchange-alt"></i> Ownership Transfer</h2>
                 </div>
-                <div class="form-group">
-                    <label>Token ID</label>
-                    <input type="number" id="transferTokenId" placeholder="Enter Token ID">
+                <div class="input-group" style="margin-bottom: 1.5rem;">
+                    <label>Property Token ID</label>
+                    <input type="number" id="transferTokenId" class="input-field" placeholder="Token #">
                 </div>
-                <div class="form-group">
-                    <label>New Owner Address</label>
-                    <input type="text" id="newOwner" placeholder="0x...">
+                <div class="input-group" style="margin-bottom: 2rem;">
+                    <label>Recipient's Wallet Address</label>
+                    <input type="text" id="newOwner" class="input-field" placeholder="0x...">
                 </div>
-                <button class="btn btn-primary" onclick="transferLand()" style="width: 100%;">
-                    <i class="fas fa-paper-plane"></i> Transfer Land
+                <button id="transferBtn" class="cyber-btn btn-glow-primary" onclick="transferLand()" style="width: 100%;">
+                    <i class="fas fa-paper-plane"></i> SEND TRANSFER REQUEST
                 </button>
             </div>
-        </div>
+        </section>
 
-        <div class="contract-address">
-            <i class="fas fa-link"></i> Contract Address: <span id="contractAddr">0x5FbDB2315678afecb367f032d93F642f64180aa3</span>
-        </div>
-    </div>
+        <footer style="margin-top: 5rem; padding-bottom: 3rem; text-align: center; color: var(--text-dim); font-size: 0.8rem;">
+            <div style="font-family: 'JetBrains Mono', monospace; opacity: 0.5;">
+                CORE_ADDR: <span id="contractAddr" style="color: var(--accent-primary);">0x5FbDB2315678afecb367f032d93F642f64180aa3</span>
+            </div>
+        </footer>
+    </main>
 
+    <!-- Dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
-    <script>
-        let web3;
-        let contract;
-        let account;
-        
-        const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
-        
-        const contractABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"buyLand","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_tokenId","type":"uint256"}],"name":"delist","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_tokenId","type":"uint256"}],"name":"getLandDetails","outputs":[{"internalType":"string","name":"location","type":"string"},{"internalType":"uint256","name":"area","type":"uint256"},{"internalType":"string","name":"ipfsHash","type":"string"},{"internalType":"address","name":"owner","type":"address"},{"internalType":"bool","name":"isVerified","type":"bool"},{"internalType":"uint256","name":"price","type":"uint256"},{"internalType":"uint256","name":"timestamp","type":"uint256"},{"internalType":"string","name":"parcelId","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_owner","type":"address"}],"name":"getLandsByOwner","outputs":[{"internalType":"uint256[]","name":"","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_tokenId","type":"uint256"},{"internalType":"uint256","name":"_price","type":"uint256"}],"name":"listForSale","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_owner","type":"address"},{"internalType":"string","name":"_location","type":"string"},{"internalType":"uint256","name":"_area","type":"uint256"},{"internalType":"string","name":"_ipfsHash","type":"string"},{"internalType":"string","name":"_parcelId","type":"string"}],"name":"mintLand","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_to","type":"address"},{"internalType":"uint256","name":"_tokenId","type":"uint256"}],"name":"transferLand","outputs":[],"stateMutability":"nonpayable","type":"function"}];
-
-        async function connectWallet() {
-            if (window.ethereum) {
-                try {
-                    web3 = new Web3(window.ethereum);
-                    await window.ethereum.request({ method: 'eth_requestAccounts' });
-                    const accounts = await web3.eth.getAccounts();
-                    account = accounts[0];
-                    
-                    contract = new web3.eth.Contract(contractABI, contractAddress);
-                    
-                    document.getElementById('walletInfo').innerHTML = `
-                        <div class="connected">
-                            <i class="fas fa-circle" style="color: #22c55e; font-size: 0.75rem;"></i>
-                            ${account.slice(0, 6)}...${account.slice(-4)}
-                        </div>
-                    `;
-                    document.getElementById('ownerAddress').value = account;
-                    
-                    showMessage('Wallet connected successfully!', 'success');
-                    await loadStats();
-                    await loadMyLands();
-                    await loadMarketplace();
-                } catch (error) {
-                    showMessage('Error connecting wallet: ' + error.message, 'error');
-                }
-            } else {
-                showMessage('Please install MetaMask!', 'error');
-            }
-        }
-
-        async function loadStats() {
-            if (!contract) return;
-            try {
-                const lands = await contract.methods.getLandsByOwner(account).call();
-                document.getElementById('yourLands').innerHTML = lands.length;
-                
-                let listed = 0;
-                for (let i = 1; i <= 10; i++) {
-                    try {
-                        const land = await contract.methods.getLandDetails(i).call();
-                        if (land.owner !== "0x0000000000000000000000000000000000000000") {
-                            document.getElementById('totalLands').innerHTML = i;
-                            if (land.price > 0) listed++;
-                        }
-                    } catch(e) { break; }
-                }
-                document.getElementById('listedLands').innerHTML = listed;
-            } catch(e) {}
-        }
-
-        async function registerLand() {
-            if (!contract) { showMessage('Please connect wallet first!', 'error'); return; }
-            
-            const owner = document.getElementById('ownerAddress').value;
-            const location = document.getElementById('location').value;
-            const area = document.getElementById('area').value;
-            const parcelId = document.getElementById('parcelId').value;
-            
-            if (!owner || !location || !area || !parcelId) {
-                showMessage('Please fill all fields!', 'error');
-                return;
-            }
-            
-            try {
-                showMessage('Registering land...', 'success');
-                const ipfsHash = "Qm" + Math.random().toString(36).substring(7);
-                await contract.methods.mintLand(owner, location, area, ipfsHash, parcelId).send({ from: account });
-                showMessage('✅ Land registered successfully!', 'success');
-                document.getElementById('location').value = '';
-                document.getElementById('area').value = '';
-                document.getElementById('parcelId').value = '';
-                await loadStats();
-                await loadMyLands();
-            } catch (error) {
-                showMessage('Error: ' + error.message, 'error');
-            }
-        }
-
-        async function listForSale() {
-            if (!contract) { showMessage('Please connect wallet first!', 'error'); return; }
-            
-            const tokenId = document.getElementById('listTokenId').value;
-            const price = document.getElementById('listPrice').value;
-            
-            if (!tokenId || !price) {
-                showMessage('Please fill all fields!', 'error');
-                return;
-            }
-            
-            try {
-                const priceWei = web3.utils.toWei(price, 'ether');
-                await contract.methods.listForSale(tokenId, priceWei).send({ from: account });
-                showMessage('✅ Land #' + tokenId + ' listed for ' + price + ' ETH!', 'success');
-                await loadMarketplace();
-                await loadMyLands();
-            } catch (error) {
-                showMessage('Error: ' + error.message, 'error');
-            }
-        }
-
-        async function delistLand() {
-            if (!contract) { showMessage('Please connect wallet first!', 'error'); return; }
-            
-            const tokenId = document.getElementById('listTokenId').value;
-            if (!tokenId) { showMessage('Please enter Token ID!', 'error'); return; }
-            
-            try {
-                await contract.methods.delist(tokenId).send({ from: account });
-                showMessage('✅ Land #' + tokenId + ' removed from sale!', 'success');
-                await loadMarketplace();
-            } catch (error) {
-                showMessage('Error: ' + error.message, 'error');
-            }
-        }
-
-        async function buyLand() {
-            if (!contract) { showMessage('Please connect wallet first!', 'error'); return; }
-            
-            const tokenId = document.getElementById('buyTokenId').value;
-            if (!tokenId) { showMessage('Please enter Token ID!', 'error'); return; }
-            
-            try {
-                const land = await contract.methods.getLandDetails(tokenId).call();
-                if (land.price == 0) { showMessage('Land is not for sale!', 'error'); return; }
-                
-                showMessage('Processing purchase...', 'success');
-                await contract.methods.buyLand(tokenId).send({ from: account, value: land.price });
-                showMessage('✅ Land #' + tokenId + ' purchased successfully!', 'success');
-                await loadStats();
-                await loadMyLands();
-                await loadMarketplace();
-            } catch (error) {
-                showMessage('Error: ' + error.message, 'error');
-            }
-        }
-
-        async function transferLand() {
-            if (!contract) { showMessage('Please connect wallet first!', 'error'); return; }
-            
-            const tokenId = document.getElementById('transferTokenId').value;
-            const newOwner = document.getElementById('newOwner').value;
-            
-            if (!tokenId || !newOwner) {
-                showMessage('Please fill all fields!', 'error');
-                return;
-            }
-            
-            try {
-                await contract.methods.transferLand(newOwner, tokenId).send({ from: account });
-                showMessage('✅ Land #' + tokenId + ' transferred successfully!', 'success');
-                await loadMyLands();
-            } catch (error) {
-                showMessage('Error: ' + error.message, 'error');
-            }
-        }
-
-        async function viewLand() {
-            if (!contract) { showMessage('Please connect wallet first!', 'error'); return; }
-            
-            const tokenId = document.getElementById('viewTokenId').value;
-            if (!tokenId) { showMessage('Please enter Token ID!', 'error'); return; }
-            
-            try {
-                const land = await contract.methods.getLandDetails(tokenId).call();
-                const priceEth = web3.utils.fromWei(land.price, 'ether');
-                const date = new Date(Number(land.timestamp) * 1000).toLocaleString();
-                
-                document.getElementById('landDetails').innerHTML = `
-                    <div style="background: rgba(0,0,0,0.3); border-radius: 16px; padding: 1.5rem; margin-top: 1rem;">
-                        <h3 style="color: #60a5fa; margin-bottom: 1rem;">📋 Land #${tokenId}</h3>
-                        <div class="grid-2">
-                            <div><strong>📍 Location:</strong><br>${land.location}</div>
-                            <div><strong>📏 Area:</strong><br>${land.area} sq meters</div>
-                            <div><strong>👤 Owner:</strong><br>${land.owner.slice(0,10)}...${land.owner.slice(-6)}</div>
-                            <div><strong>🔖 Parcel ID:</strong><br>${land.parcelId}</div>
-                            <div><strong>💰 Price:</strong><br>${priceEth} ETH</div>
-                            <div><strong>✅ Verified:</strong><br>${land.isVerified ? 'Yes' : 'No'}</div>
-                            <div><strong>📅 Registered:</strong><br>${date}</div>
-                        </div>
-                    </div>
-                `;
-            } catch (error) {
-                document.getElementById('landDetails').innerHTML = '<div style="color: #ef4444;">❌ Land not found</div>';
-            }
-        }
-
-        async function loadMyLands() {
-            if (!contract || !account) return;
-            
-            try {
-                const lands = await contract.methods.getLandsByOwner(account).call();
-                
-                if (lands.length === 0) {
-                    document.getElementById('myLandsList').innerHTML = '<p style="text-align: center; color: #94a3b8;">No lands owned yet</p>';
-                    return;
-                }
-                
-                let html = '';
-                for (const id of lands) {
-                    const land = await contract.methods.getLandDetails(id).call();
-                    const priceEth = web3.utils.fromWei(land.price, 'ether');
-                    html += `
-                        <div class="land-item">
-                            <div class="land-header">
-                                <span class="land-id"><i class="fas fa-hashtag"></i> Token #${id}</span>
-                                <span class="land-price"><i class="fas fa-ethereum"></i> ${priceEth} ETH</span>
-                            </div>
-                            <div class="land-details">
-                                <i class="fas fa-map-marker-alt"></i> ${land.location} | 
-                                <i class="fas fa-chart-area"></i> ${land.area} m² | 
-                                <i class="fas fa-barcode"></i> ${land.parcelId}
-                            </div>
-                        </div>
-                    `;
-                }
-                document.getElementById('myLandsList').innerHTML = html;
-            } catch(e) { console.error(e); }
-        }
-
-        async function loadMarketplace() {
-            if (!contract) return;
-            
-            let html = '';
-            let found = false;
-            
-            for (let i = 1; i <= 20; i++) {
-                try {
-                    const land = await contract.methods.getLandDetails(i).call();
-                    if (land.price > 0 && land.owner !== "0x0000000000000000000000000000000000000000") {
-                        found = true;
-                        const priceEth = web3.utils.fromWei(land.price, 'ether');
-                        html += `
-                            <div class="land-item">
-                                <div class="land-header">
-                                    <span class="land-id"><i class="fas fa-hashtag"></i> Token #${i}</span>
-                                    <span class="land-price"><i class="fas fa-ethereum"></i> ${priceEth} ETH</span>
-                                </div>
-                                <div class="land-details">
-                                    <i class="fas fa-map-marker-alt"></i> ${land.location}<br>
-                                    <i class="fas fa-chart-area"></i> ${land.area} m² | 
-                                    <i class="fas fa-barcode"></i> ${land.parcelId}
-                                </div>
-                                <button class="btn btn-primary" style="margin-top: 10px; width: 100%;" onclick="document.getElementById('buyTokenId').value='${i}'; buyLand();">
-                                    <i class="fas fa-shopping-cart"></i> Buy Now
-                                </button>
-                            </div>
-                        `;
-                    }
-                } catch(e) { break; }
-            }
-            
-            document.getElementById('marketplaceList').innerHTML = found ? html : '<p style="text-align: center; color: #94a3b8;">No lands currently for sale</p>';
-        }
-
-        function showMessage(msg, type) {
-            const alertDiv = document.getElementById('alert');
-            alertDiv.textContent = msg;
-            alertDiv.className = 'alert alert-' + type;
-            alertDiv.style.display = 'block';
-            setTimeout(() => {
-                alertDiv.style.display = 'none';
-            }, 5000);
-        }
-
-        function showTab(tabName) {
-            const tabs = ['register', 'marketplace', 'mylands', 'transfer'];
-            tabs.forEach(tab => {
-                document.getElementById(tab + 'Tab').style.display = 'none';
-            });
-            document.getElementById(tabName + 'Tab').style.display = 'block';
-            
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            if (tabName === 'marketplace') loadMarketplace();
-            if (tabName === 'mylands') loadMyLands();
-        }
-
-        // Auto-load when wallet is connected
-        if (window.ethereum) {
-            window.ethereum.on('accountsChanged', function(accounts) {
-                if (accounts.length > 0) {
-                    account = accounts[0];
-                    loadStats();
-                    loadMyLands();
-                    loadMarketplace();
-                }
-            });
-        }
-    </script>
+    <!-- Custom JS -->
+    <script src="app.js"></script>
 </body>
 </html>
