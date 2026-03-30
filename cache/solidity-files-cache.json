@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "C:\\Users\\my pc\\Desktop\\land-registry\\contracts\\LandRegistry.sol": {
-      "lastModificationDate": 1774838747882,
-      "contentHash": "9e67ab1d3b2fb6b048348f06af4257ee",
+      "lastModificationDate": 1774862026021,
+      "contentHash": "bd6898ec1c8808866508177b720b5aa8",
       "sourceName": "contracts/LandRegistry.sol",
       "solcConfig": {
         "version": "0.8.19",
@@ -30,7 +30,7 @@
       },
       "imports": [
         "@openzeppelin/contracts/token/ERC721/ERC721.sol",
-        "@openzeppelin/contracts/access/AccessControl.sol",
+        "@openzeppelin/contracts/access/AccessControlEnumerable.sol",
         "@openzeppelin/contracts/utils/Counters.sol"
       ],
       "versionPragmas": [
@@ -550,6 +550,117 @@
       ],
       "artifacts": [
         "IERC721Metadata"
+      ]
+    },
+    "C:\\Users\\my pc\\Desktop\\land-registry\\node_modules\\@openzeppelin\\contracts\\access\\AccessControlEnumerable.sol": {
+      "lastModificationDate": 1774838000881,
+      "contentHash": "b6d9b165dc57e9ad8153bdca05c783a4",
+      "sourceName": "@openzeppelin/contracts/access/AccessControlEnumerable.sol",
+      "solcConfig": {
+        "version": "0.8.19",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IAccessControlEnumerable.sol",
+        "./AccessControl.sol",
+        "../utils/structs/EnumerableSet.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "AccessControlEnumerable"
+      ]
+    },
+    "C:\\Users\\my pc\\Desktop\\land-registry\\node_modules\\@openzeppelin\\contracts\\utils\\structs\\EnumerableSet.sol": {
+      "lastModificationDate": 1774838000956,
+      "contentHash": "e029f029abc1fd2d85d54fd69086f076",
+      "sourceName": "@openzeppelin/contracts/utils/structs/EnumerableSet.sol",
+      "solcConfig": {
+        "version": "0.8.19",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "EnumerableSet"
+      ]
+    },
+    "C:\\Users\\my pc\\Desktop\\land-registry\\node_modules\\@openzeppelin\\contracts\\access\\IAccessControlEnumerable.sol": {
+      "lastModificationDate": 1774838001164,
+      "contentHash": "4e71cc90682e109e999ce2bd329f6572",
+      "sourceName": "@openzeppelin/contracts/access/IAccessControlEnumerable.sol",
+      "solcConfig": {
+        "version": "0.8.19",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IAccessControl.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IAccessControlEnumerable"
       ]
     }
   }

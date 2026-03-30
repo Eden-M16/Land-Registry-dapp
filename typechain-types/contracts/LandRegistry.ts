@@ -67,6 +67,8 @@ export interface LandRegistryInterface extends utils.Interface {
     "getLandDetails(uint256)": FunctionFragment;
     "getLandsByOwner(address)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
+    "getRoleMember(bytes32,uint256)": FunctionFragment;
+    "getRoleMemberCount(bytes32)": FunctionFragment;
     "getTransactionHistory(uint256)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
@@ -102,6 +104,8 @@ export interface LandRegistryInterface extends utils.Interface {
       | "getLandDetails"
       | "getLandsByOwner"
       | "getRoleAdmin"
+      | "getRoleMember"
+      | "getRoleMemberCount"
       | "getTransactionHistory"
       | "grantRole"
       | "hasRole"
@@ -163,6 +167,14 @@ export interface LandRegistryInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getRoleAdmin",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRoleMember",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRoleMemberCount",
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
@@ -289,6 +301,14 @@ export interface LandRegistryInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getRoleAdmin",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRoleMember",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRoleMemberCount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -589,6 +609,17 @@ export interface LandRegistry extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    getRoleMember(
+      role: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    getRoleMemberCount(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     getTransactionHistory(
       _tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -803,6 +834,17 @@ export interface LandRegistry extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  getRoleMember(
+    role: PromiseOrValue<BytesLike>,
+    index: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  getRoleMemberCount(
+    role: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   getTransactionHistory(
     _tokenId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
@@ -1016,6 +1058,17 @@ export interface LandRegistry extends BaseContract {
       role: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    getRoleMember(
+      role: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    getRoleMemberCount(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getTransactionHistory(
       _tokenId: PromiseOrValue<BigNumberish>,
@@ -1322,6 +1375,17 @@ export interface LandRegistry extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getRoleMember(
+      role: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getRoleMemberCount(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getTransactionHistory(
       _tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -1486,6 +1550,17 @@ export interface LandRegistry extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getRoleAdmin(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getRoleMember(
+      role: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getRoleMemberCount(
       role: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

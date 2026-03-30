@@ -2,10 +2,10 @@
 pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-contract LandRegistry is ERC721, AccessControl {
+contract LandRegistry is ERC721, AccessControlEnumerable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
     Counters.Counter private _transactionIds;
@@ -198,7 +198,7 @@ contract LandRegistry is ERC721, AccessControl {
         return lands;
     }
     
-    function supportsInterface(bytes4 interfaceId) public view override(ERC721, AccessControl) returns (bool) {
+    function supportsInterface(bytes4 interfaceId) public view override(ERC721, AccessControlEnumerable) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 }
