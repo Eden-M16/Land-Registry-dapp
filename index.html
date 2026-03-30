@@ -43,6 +43,10 @@
                     <i class="fas fa-exchange-alt"></i>
                     <span>Asset Transfer</span>
                 </li>
+                <li class="nav-item" id="adminTabLink" onclick="showTab('admin')" style="display: none; border-left: 3px solid var(--accent-danger);">
+                    <i class="fas fa-user-shield" style="color: var(--accent-danger);"></i>
+                    <span style="color: var(--accent-danger);">Admin Console</span>
+                </li>
             </ul>
         </nav>
 
@@ -217,6 +221,55 @@
                 <button id="transferBtn" class="cyber-btn btn-glow-primary" onclick="transferLand()" style="width: 100%;">
                     <i class="fas fa-paper-plane"></i> INITIATE SECURE TRANSFER
                 </button>
+            </div>
+        </section>
+
+        <section id="adminTab" class="tab-content" style="display: none;">
+            <div class="grid-container">
+                <div class="cyber-card" style="grid-column: span 6;">
+                    <div class="card-header">
+                        <h2 style="color: var(--accent-danger);"><i class="fas fa-user-plus"></i> Role Provisioning</h2>
+                    </div>
+                    <div class="input-group" style="margin-bottom: 1.5rem;">
+                        <label>Target Account Address</label>
+                        <input type="text" id="roleAccount" class="input-field" placeholder="0x...">
+                    </div>
+                    <div class="input-group" style="margin-bottom: 2rem;">
+                        <label>Select Role</label>
+                        <select id="roleSelect" class="input-field">
+                            <option value="REGISTRAR">REGISTRAR_ROLE</option>
+                            <option value="ADMIN">DEFAULT_ADMIN_ROLE</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; gap: 1rem;">
+                        <button id="grantBtn" class="cyber-btn btn-glow-primary" style="flex: 1; background: var(--accent-success); color: #000;" onclick="manageRole('grant')">GRANT ROLE</button>
+                        <button id="revokeBtn" class="cyber-btn btn-outline" style="flex: 1; border-color: var(--accent-danger); color: var(--accent-danger);" onclick="manageRole('revoke')">REVOKE ROLE</button>
+                    </div>
+                </div>
+
+                <div class="cyber-card" style="grid-column: span 12; margin-top: 2rem;">
+                    <div class="card-header">
+                        <h2><i class="fas fa-users-cog"></i> System Personnel Audit</h2>
+                        <button class="cyber-btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.8rem;" onclick="refreshRoleMembers()">
+                            <i class="fas fa-sync-alt"></i> REFRESH LIST
+                        </button>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table class="data-table">
+                            <thead>
+                                <tr style="color: var(--text-muted); text-align: left; font-size: 0.8rem; text-transform: uppercase;">
+                                    <th style="padding: 1rem;">Member Address</th>
+                                    <th style="padding: 1rem;">Role Identity</th>
+                                    <th style="padding: 1rem;">Access Status</th>
+                                    <th style="padding: 1rem; text-align: right;">Management</th>
+                                </tr>
+                            </thead>
+                            <tbody id="roleMembersList">
+                                <!-- Members will be listed here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </section>
 
