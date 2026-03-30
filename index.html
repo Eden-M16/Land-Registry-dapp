@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏠 Blockchain Land Registry</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .status-bar {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .wallet-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+        
+        .btn-danger {
+            background: #e53e3e;
+        }
+        
+        .btn-danger:hover {
+            background: #c53030;
+        }
+        
+        .btn-success {
+            background: #48bb78;
+        }
+        
+        .btn-success:hover {
+            background: #38a169;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .card h2 {
+            margin-bottom: 15px;
+            color: #333;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .land-item {
+            background: #f7f7f7;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .land-item h3 {
+            margin-bottom: 10px;
+            color: #667eea;
+        }
+        
+        .land-item p {
+            margin: 5px 0;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .message {
+            background: #48bb78;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .error {
+            background: #e53e3e;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
+        }
+        
+        .contract-address {
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            margin-top: 10px;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏠 Blockchain Land Registry</h1>
+            <p>Secure, Transparent, Immutable Land Title Management</p>
+        </div>
+        
+        <div class="status-bar">
+            <div>
+                <strong>Network:</strong> <span id="network">Hardhat Local</span>
+            </div>
+            <div class="wallet-info">
+                <span id="walletStatus">🔴 Not Connected</span>
+                <button onclick="connectWallet()">Connect Wallet</button>
+            </div>
+        </div>
+        
+        <div class="contract-address">
+            <strong>Contract Address:</strong> 0x5FbDB2315678afecb367f032d93F642f64180aa3
+        </div>
+        
+        <div id="message" class="message"></div>
+        
+        <div class="grid">
+            <!-- Register New Land -->
+            <div class="card">
+                <h2>📝 Register New Land</h2>
+                <p style="color: #666; margin-bottom: 10px; font-size: 12px;">⚠️ Only Registrar can register lands</p>
+                <input type="text" id="ownerAddress" placeholder="Owner Address">
+                <input type="text" id="location" placeholder="Location (e.g., 123 Main St)">
+                <input type="text" id="area" placeholder="Area (sq meters)">
+                <input type="text" id="parcelId" placeholder="Parcel ID (unique)">
+                <button onclick="registerLand()">Register Land</button>
+            </div>
+            
+            <!-- List Land for Sale -->
+            <div class="card">
+                <h2>💰 List Land for Sale</h2>
+                <input type="number" id="listTokenId" placeholder="Token ID">
+                <input type="number" id="listPrice" placeholder="Price (ETH)">
+                <button onclick="listForSale()">List for Sale</button>
+                <button onclick="delistLand()" class="btn-danger">Delist</button>
+            </div>
+            
+            <!-- Buy Land -->
+            <div class="card">
+                <h2>🛒 Buy Land</h2>
+                <input type="number" id="buyTokenId" placeholder="Token ID">
+                <button onclick="buyLand()" class="btn-success">Buy Land</button>
+            </div>
+            
+            <!-- Transfer Land -->
+            <div class="card">
+                <h2>🔄 Transfer Land</h2>
+                <input type="number" id="transferTokenId" placeholder="Token ID">
+                <input type="text" id="newOwner" placeholder="New Owner Address">
+                <button onclick="transferLand()">Transfer</button>
+            </div>
+        </div>
+        
+        <!-- View Land -->
+        <div class="card">
+            <h2>🔍 View Land Details</h2>
+            <div style="display: flex; gap: 10px;">
+                <input type="number" id="viewTokenId" placeholder="Token ID" style="flex: 1;">
+                <button onclick="viewLand()">View Land</button>
+                <button onclick="loadMyLands()">Load My Lands</button>
+            </div>
+            <div id="landDetails" style="margin-top: 15px;"></div>
+        </div>
+        
+        <!-- My Lands -->
+        <div class="card">
+            <h2>🏘️ My Lands</h2>
+            <div id="myLands"></div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
+    <script>
+        let web3;
+        let contract;
+        let account;
+        
+        // Contract details
+        const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+        
+        // Complete ABI from your contract
+        const contractABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"buyLand","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_tokenId","type":"uint256"}],"name":"delist","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_tokenId","type":"uint256"}],"name":"getLandDetails","outputs":[{"internalType":"string","name":"location","type":"string"},{"internalType":"uint256","name":"area","type":"uint256"},{"internalType":"string","name":"ipfsHash","type":"string"},{"internalType":"address","name":"owner","type":"address"},{"internalType":"bool","name":"isVerified","type":"bool"},{"internalType":"uint256","name":"price","type":"uint256"},{"internalType":"uint256","name":"timestamp","type":"uint256"},{"internalType":"string","name":"parcelId","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_owner","type":"address"}],"name":"getLandsByOwner","outputs":[{"internalType":"uint256[]","name":"","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_tokenId","type":"uint256"},{"internalType":"uint256","name":"_price","type":"uint256"}],"name":"listForSale","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_owner","type":"address"},{"internalType":"string","name":"_location","type":"string"},{"internalType":"uint256","name":"_area","type":"uint256"},{"internalType":"string","name":"_ipfsHash","type":"string"},{"internalType":"string","name":"_parcelId","type":"string"}],"name":"mintLand","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_to","type":"address"},{"internalType":"uint256","name":"_tokenId","type":"uint256"}],"name":"transferLand","outputs":[],"stateMutability":"nonpayable","type":"function"}];
+        
+        async function connectWallet() {
+            if (window.ethereum) {
+                try {
+                    web3 = new Web3(window.ethereum);
+                    await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    const accounts = await web3.eth.getAccounts();
+                    account = accounts[0];
+                    
+                    contract = new web3.eth.Contract(contractABI, contractAddress);
+                    
+                    document.getElementById('walletStatus').innerHTML = '🟢 Connected: ' + account.slice(0, 6) + '...' + account.slice(-4);
+                    document.getElementById('ownerAddress').value = account;
+                    
+                    showMessage('Wallet connected successfully!', 'success');
+                    loadMyLands();
+                } catch (error) {
+                    showMessage('Error connecting wallet: ' + error.message, 'error');
+                }
+            } else {
+                showMessage('Please install MetaMask!', 'error');
+            }
+        }
+        
+        async function registerLand() {
+            if (!contract) { showMessage('Please connect wallet first!', 'error'); return; }
+            
+            const owner = document.getElementById('ownerAddress').value;
+            const location = document.getElementById('location').value;
+            const area = document.getElementById('area').value;
+            const parcelId = document.getElementById('parcelId').value;
+            
+            if (!owner || !location || !area || !parcelId) {
+                showMessage('Please fill all fields!', 'error');
+                return;
+            }
+            
+            try {
+                showMessage('Registering land...', 'success');
+                const ipfsHash = "QmHash" + Date.now();
+                const tx = await contract.methods.mintLand(owner, location, area, ipfsHash, parcelId).send({ from: account });
+                showMessage('✅ Land registered successfully!', 'success');
+                loadMyLands();
+                document.getElementById('location').value = '';
+                document.getElementById('area').value = '';
+                document.getElementById('parcelId').value = '';
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        }
+        
+        async function listForSale() {
+            if (!contract) { showMessage('Please connect wallet first!', 'error'); return; }
+            
+            const tokenId = document.getElementById('listTokenId').value;
+            const price = document.getElementById('listPrice').value;
+            
+            if (!tokenId || !price) {
+                showMessage('Please fill all fields!', 'error');
+                return;
+            }
+            
+            try {
+                const priceWei = web3.utils.toWei(price, 'ether');
+                await contract.methods.listForSale(tokenId, priceWei).send({ from: account });
+                showMessage('✅ Land #' + tokenId + ' listed for ' + price + ' ETH!', 'success');
+                viewLand();
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        }
+        
+        async function delistLand() {
+            if (!contract) { showMessage('Please connect wallet first!', 'error'); return; }
+            
+            const tokenId = document.getElementById('listTokenId').value;
+            
+            if (!tokenId) {
+                showMessage('Please enter Token ID!', 'error');
+                return;
+            }
+            
+            try {
+                await contract.methods.delist(tokenId).send({ from: account });
+                showMessage('✅ Land #' + tokenId + ' removed from sale!', 'success');
+                viewLand();
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        }
+        
+        async function buyLand() {
+            if (!contract) { showMessage('Please connect wallet first!', 'error'); return; }
+            
+            const tokenId = document.getElementById('buyTokenId').value;
+            
+            if (!tokenId) {
+                showMessage('Please enter Token ID!', 'error');
+                return;
+            }
+            
+            try {
+                const land = await contract.methods.getLandDetails(tokenId).call();
+                const price = land.price;
+                
+                if (price == 0) {
+                    showMessage('Land is not for sale!', 'error');
+                    return;
+                }
+                
+                showMessage('Buying land...', 'success');
+                await contract.methods.buyLand(tokenId).send({ from: account, value: price });
+                showMessage('✅ Land #' + tokenId + ' purchased successfully!', 'success');
+                loadMyLands();
+                viewLand();
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        }
+        
+        async function transferLand() {
+            if (!contract) { showMessage('Please connect wallet first!', 'error'); return; }
+            
+            const tokenId = document.getElementById('transferTokenId').value;
+            const newOwner = document.getElementById('newOwner').value;
+            
+            if (!tokenId || !newOwner) {
+                showMessage('Please fill all fields!', 'error');
+                return;
+            }
+            
+            try {
+                await contract.methods.transferLand(newOwner, tokenId).send({ from: account });
+                showMessage('✅ Land #' + tokenId + ' transferred to ' + newOwner, 'success');
+                loadMyLands();
+                viewLand();
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        }
+        
+        async function viewLand() {
+            if (!contract) { showMessage('Please connect wallet first!', 'error'); return; }
+            
+            const tokenId = document.getElementById('viewTokenId').value;
+            
+            if (!tokenId) {
+                showMessage('Please enter Token ID!', 'error');
+                return;
+            }
+            
+            try {
+                const land = await contract.methods.getLandDetails(tokenId).call();
+                const priceEth = web3.utils.fromWei(land.price, 'ether');
+                const date = new Date(Number(land.timestamp) * 1000).toLocaleString();
+                
+                document.getElementById('landDetails').innerHTML = `
+                    <div class="land-item">
+                        <h3>🏠 Land #${tokenId}</h3>
+                        <p><strong>Location:</strong> ${land.location}</p>
+                        <p><strong>Area:</strong> ${land.area} sq meters</p>
+                        <p><strong>Owner:</strong> ${land.owner}</p>
+                        <p><strong>Parcel ID:</strong> ${land.parcelId}</p>
+                        <p><strong>Price:</strong> ${priceEth} ETH</p>
+                        <p><strong>Verified:</strong> ${land.isVerified ? '✅ Yes' : '❌ No'}</p>
+                        <p><strong>Registered:</strong> ${date}</p>
+                    </div>
+                `;
+            } catch (error) {
+                document.getElementById('landDetails').innerHTML = '<div class="land-item">❌ Land not found</div>';
+                showMessage('Land not found!', 'error');
+            }
+        }
+        
+        async function loadMyLands() {
+            if (!contract || !account) { return; }
+            
+            try {
+                const lands = await contract.methods.getLandsByOwner(account).call();
+                
+                if (lands.length === 0) {
+                    document.getElementById('myLands').innerHTML = '<p>No lands owned yet</p>';
+                    return;
+                }
+                
+                let html = '';
+                for (const id of lands) {
+                    try {
+                        const land = await contract.methods.getLandDetails(id).call();
+                        const priceEth = web3.utils.fromWei(land.price, 'ether');
+                        html += `
+                            <div class="land-item">
+                                <h3>🏠 Land #${id}</h3>
+                                <p><strong>Location:</strong> ${land.location}</p>
+                                <p><strong>Area:</strong> ${land.area} sq m</p>
+                                <p><strong>Price:</strong> ${priceEth} ETH</p>
+                                <p><strong>Parcel ID:</strong> ${land.parcelId}</p>
+                                <button onclick="document.getElementById('viewTokenId').value='${id}'; viewLand();" style="margin-top: 10px;">View Details</button>
+                            </div>
+                        `;
+                    } catch(e) {
+                        console.error(e);
+                    }
+                }
+                document.getElementById('myLands').innerHTML = html;
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        
+        function showMessage(msg, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = msg;
+            messageDiv.className = 'message ' + (type === 'error' ? 'error' : '');
+            messageDiv.style.display = 'block';
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Auto-detect network
+        if (window.ethereum) {
+            window.ethereum.on('accountsChanged', function(accounts) {
+                if (accounts.length > 0) {
+                    account = accounts[0];
+                    document.getElementById('walletStatus').innerHTML = '🟢 Connected: ' + account.slice(0, 6) + '...' + account.slice(-4);
+                    loadMyLands();
+                } else {
+                    document.getElementById('walletStatus').innerHTML = '🔴 Not Connected';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

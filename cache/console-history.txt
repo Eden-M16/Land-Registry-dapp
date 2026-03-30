@@ -1,0 +1,6 @@
+cat artifacts/contracts/LandRegistry.sol/LandRegistry.json
+console.log(Object.keys(landRegistry.interface.functions))
+const totalSupply = await landRegistry.totalSupply()
+await landRegistry.getLandDetails(1)
+landRegistry = await (await ethers.getContractFactory("LandRegistry")).attach("0x5FbDB2315678afecb367f032d93F642f64180aa3");
+const landRegistry = await (await ethers.getContractFactory("LandRegistry")).attach("0x5FbDB2315678afecb367f032d93F642f64180aa3");
