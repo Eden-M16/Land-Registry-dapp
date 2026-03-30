@@ -98,10 +98,17 @@ function updateWalletUI() {
         const ownerInput = document.getElementById('ownerAddress');
         if (ownerInput) ownerInput.value = account;
 
+        // In a premium UI, we don't hide the menu, we show it as "Restricted"
         if (registerTabBtn) {
-            registerTabBtn.style.display = isRegistrar ? 'flex' : 'none';
-            if (!isRegistrar && registerTabBtn.classList.contains('active')) {
-                showTab('marketplace');
+            registerTabBtn.style.display = 'flex';
+            if (!isRegistrar) {
+                registerTabBtn.innerHTML = '<i class="fas fa-lock" style="font-size: 0.8rem; opacity: 0.5;"></i> <span>Registration</span>';
+                document.getElementById('registerContent').style.display = 'none';
+                document.getElementById('unauthorizedView').style.display = 'flex';
+            } else {
+                registerTabBtn.innerHTML = '<i class="fas fa-plus-circle"></i> <span>Registration</span>';
+                document.getElementById('registerContent').style.display = 'block';
+                document.getElementById('unauthorizedView').style.display = 'none';
             }
         }
     }
