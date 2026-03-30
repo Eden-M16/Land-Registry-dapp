@@ -4,10 +4,346 @@ let account;
 
 const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 
-const contractABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"buyLand","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_tokenId","type":"uint256"}],"name":"delist","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_tokenId","type":"uint256"}],"name":"getLandDetails","outputs":[{"internalType":"string","name":"location","type":"string"},{"internalType":"uint256","name":"area","type":"uint256"},{"internalType":"string","name":"ipfsHash","type":"string"},{"internalType":"address","name":"owner","type":"address"},{"internalType":"bool","name":"isVerified","type":"bool"},{"internalType":"uint256","name":"price","type":"uint256"},{"internalType":"uint256","name":"timestamp","type":"uint256"},{"internalType":"string","name":"parcelId","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_owner","type":"address"}],"name":"getLandsByOwner","outputs":[{"internalType":"uint256[]","name":"","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_tokenId","type":"uint256"}],"name":"getTransactionHistory","outputs":[{"components":[{"internalType":"uint256","name":"transactionId","type":"uint256"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"price","type":"uint256"},{"internalType":"uint256","name":"timestamp","type":"uint256"}],"internalType":"struct LandRegistry.Transaction[]","name":"","type":"tuple[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"hasRole","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_tokenId","type":"uint256"},{"internalType":"uint256","name":"_price","type":"uint256"}],"name":"listForSale","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_owner","type":"address"},{"internalType":"string","name":"_location","type":"string"},{"internalType":"uint256","name":"_area","type":"uint256"},{"internalType":"string","name":"_ipfsHash","type":"string"},{"internalType":"string","name":"_parcelId","type":"string"}],"name":"mintLand","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_newOwner","type":"address"},{"internalType":"uint256","name":"_tokenId","type":"uint256"}],"name":"transferLand","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_tokenId","type":"uint256"}],"name":"verifyLand","outputs":[],"stateMutability":"nonpayable","type":"function"}];
+const contractABI = [
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "grantRole",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "revokeRole",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint256",
+          "name": "index",
+          "type": "uint256"
+        }
+      ],
+      "name": "getRoleMember",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getRoleMemberCount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "hasRole",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_owner",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "_location",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_area",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "_ipfsHash",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_parcelId",
+          "type": "string"
+        }
+      ],
+      "name": "mintLand",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_to",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "transferLand",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_tokenId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_price",
+          "type": "uint256"
+        }
+      ],
+      "name": "listForSale",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "delist",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "buyLand",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getLandDetails",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "location",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "area",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "ipfsHash",
+          "type": "string"
+        },
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "internalType": "bool",
+          "name": "isVerified",
+          "type": "bool"
+        },
+        {
+          "internalType": "uint256",
+          "name": "price",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "parcelId",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getTransactionHistory",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "transactionId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "tokenId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "price",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "timestamp",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct LandRegistry.Transaction[]",
+          "name": "",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_owner",
+          "type": "address"
+        }
+      ],
+      "name": "getLandsByOwner",
+      "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+];
 
 const REGISTRAR_ROLE = "0x2db35252033621419a4e414c776034e34e565985860d5c0b06f8c77f0d0e7e9f";
+const DEFAULT_ADMIN_ROLE = "0x0000000000000000000000000000000000000000000000000000000000000000";
 let isRegistrar = false;
+let isAdmin = false;
 let marketData = [];
 
 // UI Helpers
@@ -66,8 +402,16 @@ async function connectWallet() {
             
             // Check roles
             try {
-                isRegistrar = await contract.methods.hasRole(REGISTRAR_ROLE, account).call();
-            } catch(e) { isRegistrar = false; }
+                const results = await Promise.all([
+                    contract.methods.hasRole(REGISTRAR_ROLE, account).call(),
+                    contract.methods.hasRole(DEFAULT_ADMIN_ROLE, account).call()
+                ]);
+                isRegistrar = results[0];
+                isAdmin = results[1];
+            } catch(e) { 
+                isRegistrar = false;
+                isAdmin = false; 
+            }
 
             updateWalletUI();
             showToast('SECURE CONNECTION ESTABLISHED', 'success');
@@ -84,24 +428,29 @@ async function connectWallet() {
 function updateWalletUI() {
     const walletInfo = document.getElementById('walletInfo');
     const registerTabBtn = document.querySelector('.nav-item[onclick="showTab(\'register\')"]');
+    const adminTabBtn = document.querySelector('.nav-item[onclick="showTab(\'admin\')"]');
 
     if (account) {
+        let roleText = 'VERIFIED_USER';
+        if (isAdmin) roleText = 'SYSTEM_ADMIN';
+        else if (isRegistrar) roleText = 'REGISTRAR_AUTHORIZED';
+
         walletInfo.innerHTML = `
             <div class="status-dot"></div>
             <div style="display: flex; flex-direction: column;">
                 <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: 700;">${account.slice(0, 6)}...${account.slice(-4)}</span>
-                <span style="font-size: 0.6rem; color: var(--accent-primary); letter-spacing: 1px; font-weight: 800;">
-                    ${isRegistrar ? 'ADMIN_AUTHORIZED' : 'VERIFIED_USER'}
+                <span style="font-size: 0.6rem; color: ${isAdmin ? 'var(--accent-danger)' : 'var(--accent-primary)'}; letter-spacing: 1px; font-weight: 800;">
+                    ${roleText}
                 </span>
             </div>
         `;
         const ownerInput = document.getElementById('ownerAddress');
         if (ownerInput) ownerInput.value = account;
 
-        // In a premium UI, we don't hide the menu, we show it as "Restricted"
+        // Manage sidebar tabs visibility
         if (registerTabBtn) {
             registerTabBtn.style.display = 'flex';
-            if (!isRegistrar) {
+            if (!isRegistrar && !isAdmin) { // Admins can also register
                 registerTabBtn.innerHTML = '<i class="fas fa-lock" style="font-size: 0.8rem; opacity: 0.5;"></i> <span>Registration</span>';
                 document.getElementById('registerContent').style.display = 'none';
                 document.getElementById('unauthorizedView').style.display = 'flex';
@@ -110,6 +459,10 @@ function updateWalletUI() {
                 document.getElementById('registerContent').style.display = 'block';
                 document.getElementById('unauthorizedView').style.display = 'none';
             }
+        }
+
+        if (adminTabBtn) {
+            adminTabBtn.style.display = isAdmin ? 'flex' : 'none';
         }
     }
 }
@@ -120,8 +473,75 @@ async function refreshData() {
     await Promise.all([
         loadStats(),
         loadMyLands(),
-        loadMarketplace()
+        loadMarketplace(),
+        isAdmin ? refreshRoleMembers() : Promise.resolve()
     ]);
+}
+
+async function refreshRoleMembers() {
+    if (!contract || !isAdmin) return;
+    
+    const list = document.getElementById('roleMembersList');
+    list.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 2rem;"><div class="cyber-loader" style="margin: 0 auto;"></div></td></tr>';
+    
+    try {
+        const roles = [
+            { name: 'SYSTEM_ADMIN', hash: DEFAULT_ADMIN_ROLE },
+            { name: 'REGISTRAR', hash: REGISTRAR_ROLE }
+        ];
+        
+        let html = '';
+        for (const role of roles) {
+            const count = await contract.methods.getRoleMemberCount(role.hash).call();
+            for (let i = 0; i < count; i++) {
+                const member = await contract.methods.getRoleMember(role.hash, i).call();
+                const isYou = member.toLowerCase() === account.toLowerCase();
+                
+                html += `
+                    <tr class="data-row">
+                        <td class="data-cell">
+                            <span style="font-family: 'JetBrains Mono', monospace;">${member}</span>
+                            ${isYou ? '<span style="color: var(--accent-primary); font-size: 0.7rem; margin-left: 8px;">(YOU)</span>' : ''}
+                        </td>
+                        <td class="data-cell">
+                            <span style="font-size: 0.7rem; padding: 4px 8px; border-radius: 4px; background: ${role.name === 'SYSTEM_ADMIN' ? 'rgba(247, 37, 133, 0.1)' : 'rgba(76, 201, 240, 0.1)'}; color: ${role.name === 'SYSTEM_ADMIN' ? 'var(--accent-danger)' : 'var(--accent-primary)'};">
+                                ${role.name}
+                            </span>
+                        </td>
+                        <td class="data-cell">
+                            <span style="color: var(--accent-success);"><i class="fas fa-check-circle"></i> ACTIVE</span>
+                        </td>
+                        <td class="data-cell" style="text-align: right;">
+                            ${!isYou ? `
+                                <button class="cyber-btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.75rem; border-color: var(--accent-danger); color: var(--accent-danger);" onclick="revokeFromList('${role.hash}', '${member}', '${role.name}')">
+                                    REVOKE ACCESS
+                                </button>
+                            ` : '<span style="color: var(--text-muted); font-size: 0.75rem;">IMMUTABLE</span>'}
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+        list.innerHTML = html || '<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">NO MEMBERS DETECTED</td></tr>';
+    } catch (e) {
+        console.error(e);
+        list.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--accent-danger);">FAILED TO LOAD PERSONNEL DATA</td></tr>';
+    }
+}
+
+async function revokeFromList(roleHash, member, roleName) {
+    if (!contract || !isAdmin) return;
+    
+    if (confirm(`Are you sure you want to revoke ${roleName} access from ${member}?`)) {
+        try {
+            showToast(`REVOKING ${roleName} ACCESS...`, 'info');
+            await contract.methods.revokeRole(roleHash, member).send({ from: account });
+            showToast('ACCESS REVOKED SUCCESSFULLY', 'success');
+            await refreshRoleMembers();
+        } catch (e) {
+            showToast('REVOKE FAILED: ' + e.message, 'error');
+        }
+    }
 }
 
 async function loadStats() {
@@ -462,19 +882,55 @@ function createLandItemHTML(id, land, price, isMarketplace) {
     `;
 }
 
+async function manageRole(action) {
+    if (!contract || !isAdmin) { showToast('ADMIN_PRIVILEGE_REQUIRED', 'error'); return; }
+    
+    const accountAddr = document.getElementById('roleAccount').value;
+    const roleType = document.getElementById('roleSelect').value;
+    const roleHash = roleType === 'ADMIN' ? DEFAULT_ADMIN_ROLE : REGISTRAR_ROLE;
+    
+    if (!web3.utils.isAddress(accountAddr)) {
+        showToast('INVALID_ADDRESS', 'error');
+        return;
+    }
+    
+    try {
+        setBtnLoading(action === 'grant' ? 'grantBtn' : 'revokeBtn', true);
+        const method = action === 'grant' ? 'grantRole' : 'revokeRole';
+        
+        await contract.methods[method](roleHash, accountAddr).send({ from: account });
+        
+        showToast(`${roleType}_ROLE ${action.toUpperCase()}ED TO ${accountAddr.slice(0,6)}...`, 'success');
+        
+        const log = document.getElementById('adminLogs');
+        const entry = document.createElement('div');
+        entry.style.color = action === 'grant' ? 'var(--accent-success)' : 'var(--accent-danger)';
+        entry.innerHTML = `> ROLE_${action.toUpperCase()}: ${roleType} -> ${accountAddr.slice(0,10)}...`;
+        log.prepend(entry);
+        
+        document.getElementById('roleAccount').value = '';
+    } catch (error) {
+        showToast('ADMIN_OPERATION_FAILED: ' + error.message, 'error');
+    } finally {
+        setBtnLoading(action === 'grant' ? 'grantBtn' : 'revokeBtn', false);
+    }
+}
+
 function showTab(tabName) {
-    const sections = ['register', 'marketplace', 'mylands', 'transfer'];
+    const sections = ['register', 'marketplace', 'mylands', 'transfer', 'admin'];
     const titles = {
         register: 'Property Registration',
         marketplace: 'Premium Real Estate Market',
         mylands: 'Asset Portfolio',
-        transfer: 'Secure Asset Transfer'
+        transfer: 'Secure Asset Transfer',
+        admin: 'System Administration'
     };
     const descs = {
         register: 'Initialize new digital property titles with administrative blockchain verification.',
         marketplace: 'Explore and acquire verified land parcels within the decentralized network.',
         mylands: 'Monitor your current real estate holdings and manage verified titles.',
-        transfer: 'Execute high-security ownership migration to authorized recipient wallets.'
+        transfer: 'Execute high-security ownership migration to authorized recipient wallets.',
+        admin: 'Manage system-level roles and administrative privileges.'
     };
 
     sections.forEach(s => {
