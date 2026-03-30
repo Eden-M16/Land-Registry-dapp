@@ -87,16 +87,17 @@ function updateWalletUI() {
 
     if (account) {
         walletInfo.innerHTML = `
-            <div class="wallet-box">
-                <div class="status-dot"></div>
-                <span style="font-family: 'JetBrains Mono', monospace;">${account.slice(0, 6)}...${account.slice(-4)}</span>
-                ${isRegistrar ? '<span style="font-size: 0.6rem; background: var(--accent-secondary); padding: 2px 6px; border-radius: 4px; color: #fff; font-weight: 800; margin-left: 5px;">ROOT</span>' : ''}
+            <div class="status-dot"></div>
+            <div style="display: flex; flex-direction: column;">
+                <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: 700;">${account.slice(0, 6)}...${account.slice(-4)}</span>
+                <span style="font-size: 0.6rem; color: var(--accent-primary); letter-spacing: 1px; font-weight: 800;">
+                    ${isRegistrar ? 'ADMIN_AUTHORIZED' : 'VERIFIED_USER'}
+                </span>
             </div>
         `;
         const ownerInput = document.getElementById('ownerAddress');
         if (ownerInput) ownerInput.value = account;
 
-        // Show/hide register tab based on role
         if (registerTabBtn) {
             registerTabBtn.style.display = isRegistrar ? 'flex' : 'none';
             if (!isRegistrar && registerTabBtn.classList.contains('active')) {
@@ -430,18 +431,24 @@ function filterMarketplace() {
 
 function createLandItemHTML(id, land, price, isMarketplace) {
     return `
-        <div class="cyber-card" style="padding: 1.25rem; border: 1px solid rgba(255,255,255,0.03);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                <span class="id-tag">#${id}</span>
-                <span style="color: var(--accent-success); font-weight: 700; font-family: 'JetBrains Mono';">${price} ETH</span>
+        <div class="asset-card">
+            <div class="asset-header">
+                <span class="id-tag">TOKEN_ID: #${id}</span>
+                <span class="price-tag">${price} ETH</span>
             </div>
-            <div style="font-size: 0.75rem; color: var(--text-dim); margin-bottom: 1rem;">
-                <div><i class="fas fa-map-marker-alt"></i> ${land.location}</div>
-                <div><i class="fas fa-barcode"></i> ${land.parcelId}</div>
+            <div style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 1.5rem;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-map-marker-alt" style="color: var(--accent-primary); width: 14px;"></i>
+                    <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${land.location}</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+                    <i class="fas fa-barcode" style="color: var(--accent-primary); width: 14px;"></i>
+                    <span>PID: ${land.parcelId}</span>
+                </div>
             </div>
             ${isMarketplace ? `
-                <button class="cyber-btn btn-glow-primary" style="padding: 0.5rem; font-size: 0.8rem; width: 100%;" onclick="buyLand(${id})">
-                    ACQUIRE
+                <button class="cyber-btn btn-glow-primary" style="padding: 0.75rem; font-size: 0.85rem; width: 100%; border-radius: 12px;" onclick="buyLand(${id})">
+                    ACQUIRE ASSET
                 </button>
             ` : ''}
         </div>
@@ -452,21 +459,22 @@ function showTab(tabName) {
     const sections = ['register', 'marketplace', 'mylands', 'transfer'];
     const titles = {
         register: 'Property Registration',
-        marketplace: 'Real Estate Marketplace',
-        mylands: 'My Property Portfolio',
-        transfer: 'Transfer Ownership'
+        marketplace: 'Premium Real Estate Market',
+        mylands: 'Asset Portfolio',
+        transfer: 'Secure Asset Transfer'
     };
     const descs = {
-        register: 'Official portal to mint new digital property titles onto the blockchain.',
-        marketplace: 'Browse, buy, and list land parcels in a secure decentralized market.',
-        mylands: 'View and manage your verified real estate assets and their history.',
-        transfer: 'Securely transfer property ownership to another wallet address.'
+        register: 'Initialize new digital property titles with administrative blockchain verification.',
+        marketplace: 'Explore and acquire verified land parcels within the decentralized network.',
+        mylands: 'Monitor your current real estate holdings and manage verified titles.',
+        transfer: 'Execute high-security ownership migration to authorized recipient wallets.'
     };
 
     sections.forEach(s => {
         const el = document.getElementById(s + 'Tab');
         if (el) el.style.display = 'none';
     });
+    
     const activeEl = document.getElementById(tabName + 'Tab');
     if (activeEl) activeEl.style.display = 'block';
     

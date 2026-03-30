@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LandChain OS | Decentalized Registry</title>
+    <title>LandChain | Premium Registry</title>
     
-    <!-- Fonts -->
+    <!-- Premium Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Custom CSS -->
+    <!-- Custom Styles -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -21,35 +21,35 @@
 
     <aside class="sidebar">
         <div class="brand">
-            <div class="brand-icon"><i class="fas fa-layer-group"></i></div>
-            <span class="brand-name">LANDCHAIN OS</span>
+            <div class="brand-icon"><i class="fas fa-gem"></i></div>
+            <span class="brand-name">LANDCHAIN</span>
         </div>
 
         <nav>
             <ul class="nav-menu">
                 <li class="nav-item active" onclick="showTab('register')">
-                    <i class="fas fa-plus-square"></i>
-                    <span>Register</span>
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Registration</span>
                 </li>
                 <li class="nav-item" onclick="showTab('marketplace')">
                     <i class="fas fa-store"></i>
                     <span>Marketplace</span>
                 </li>
                 <li class="nav-item" onclick="showTab('mylands')">
-                    <i class="fas fa-briefcase"></i>
-                    <span>Portfolio</span>
+                    <i class="fas fa-wallet"></i>
+                    <span>My Portfolio</span>
                 </li>
                 <li class="nav-item" onclick="showTab('transfer')">
-                    <i class="fas fa-paper-plane"></i>
-                    <span>Transfer</span>
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Asset Transfer</span>
                 </li>
             </ul>
         </nav>
 
         <div style="margin-top: auto;">
-            <div class="network-badge">
-                <i class="fas fa-circle" style="font-size: 0.5rem;"></i>
-                Hardhat Local
+            <div class="wallet-box" id="walletInfo" onclick="connectWallet()">
+                <i class="fas fa-link" style="color: var(--accent-primary);"></i>
+                <span style="font-weight: 600;">Connect Wallet</span>
             </div>
         </div>
     </aside>
@@ -58,129 +58,124 @@
         <header>
             <div class="page-title">
                 <h1 id="activeTabTitle">Property Registry</h1>
-                <p id="activeTabDesc">Securely record and manage your land titles on the blockchain.</p>
+                <p id="activeTabDesc">Official portal for blockchain-verified land titles.</p>
             </div>
-
-            <div class="user-status">
-                <div id="walletInfo">
-                    <div class="wallet-box" onclick="connectWallet()">
-                        <i class="fas fa-wallet" style="color: var(--accent-primary);"></i>
-                        <span>Connect Secure Wallet</span>
-                    </div>
-                </div>
+            
+            <div class="status-badge" style="background: rgba(0, 245, 212, 0.05); border: 1px solid rgba(0, 245, 212, 0.2); padding: 0.5rem 1.25rem; border-radius: 100px; color: var(--accent-success); font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+                <div class="status-dot"></div> MAINNET_NODE_SYNCED
             </div>
         </header>
 
-        <!-- Stats Overview -->
+        <!-- Stats Section -->
         <div class="stats-row">
-            <div class="stat-widget" title="Total properties registered in the system">
-                <span class="stat-label">Network Total</span>
+            <div class="stat-widget">
+                <span class="stat-label">Total Assets</span>
                 <div class="stat-value" id="totalLands">00</div>
             </div>
-            <div class="stat-widget" title="Properties owned by your connected wallet">
-                <span class="stat-label">Your Properties</span>
+            <div class="stat-widget">
+                <span class="stat-label">Your Equity</span>
                 <div class="stat-value" id="yourLands">00</div>
             </div>
-            <div class="stat-widget" title="Properties currently listed for sale">
-                <span class="stat-label">Market Listings</span>
+            <div class="stat-widget">
+                <span class="stat-label">Market Active</span>
                 <div class="stat-value" id="listedLands">00</div>
             </div>
-            <div class="stat-widget" title="Current blockchain synchronization status">
-                <span class="stat-label">Sync Status</span>
-                <div class="stat-value" style="font-size: 1.25rem; color: var(--accent-success); display: flex; align-items: center; gap: 0.5rem;">
-                    <div class="status-dot"></div> ONLINE
-                </div>
+            <div class="stat-widget">
+                <span class="stat-label">Network Load</span>
+                <div class="stat-value">0.02s</div>
             </div>
         </div>
 
-        <!-- Content Sections -->
+        <!-- Dynamic Content -->
         <section id="registerTab" class="tab-content">
             <div class="cyber-card">
                 <div class="card-header">
-                    <h2><i class="fas fa-file-signature"></i> Property Registration</h2>
-                    <p style="font-size: 0.8rem; color: var(--text-dim);"><i class="fas fa-info-circle"></i> Official Registrar authorization required</p>
+                    <div>
+                        <h2>Official Asset Registration</h2>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Provisioning a new digital land title requires administrative authorization.</p>
+                    </div>
                 </div>
                 <div class="form-grid">
                     <div class="input-group">
-                        <label>Owner's Wallet Address</label>
+                        <label>Target Recipient Address</label>
                         <input type="text" id="ownerAddress" class="input-field" placeholder="0x..." readonly>
                     </div>
                     <div class="input-group">
-                        <label>Physical Location Details</label>
-                        <input type="text" id="location" class="input-field" placeholder="Address or Coordinates">
+                        <label>Geographic Coordinates / Location</label>
+                        <input type="text" id="location" class="input-field" placeholder="Lat, Long or Street Address">
                     </div>
                     <div class="input-group">
-                        <label>Land Area (sq. meters)</label>
-                        <input type="number" id="area" class="input-field" placeholder="e.g. 1500">
+                        <label>Total Land Area (m²)</label>
+                        <input type="number" id="area" class="input-field" placeholder="e.g. 5000">
                     </div>
                     <div class="input-group">
-                        <label>Official Parcel ID</label>
-                        <input type="text" id="parcelId" class="input-field" placeholder="Unique legal identifier">
+                        <label>Digital Parcel Reference</label>
+                        <input type="text" id="parcelId" class="input-field" placeholder="Official Survey ID">
                     </div>
                 </div>
-                <button id="registerBtn" class="cyber-btn btn-glow-primary" onclick="registerLand()" style="margin-top: 2rem; width: 100%;">
-                    <i class="fas fa-plus-circle"></i> COMPLETE REGISTRATION
+                <button id="registerBtn" class="cyber-btn btn-glow-primary" onclick="registerLand()" style="margin-top: 3rem; width: 100%;">
+                    <i class="fas fa-check-circle"></i> FINALIZE REGISTRATION
                 </button>
             </div>
         </section>
 
         <section id="marketplaceTab" class="tab-content" style="display: none;">
-            <div class="grid-container">
-                <div class="cyber-card" style="grid-column: span 5;">
+            <div style="display: grid; grid-template-columns: 400px 1fr; gap: 2rem;">
+                <div class="cyber-card">
                     <div class="card-header">
-                        <h2><i class="fas fa-tag"></i> Market Controls</h2>
+                        <h2>Trade Management</h2>
                     </div>
                     <div class="input-group" style="margin-bottom: 1.5rem;">
-                        <label>Select Property (Token ID)</label>
-                        <input type="number" id="listTokenId" class="input-field" placeholder="Token #">
+                        <label>Property Token ID</label>
+                        <input type="number" id="listTokenId" class="input-field" placeholder="ID #">
                     </div>
-                    <div class="input-group" style="margin-bottom: 2rem;">
-                        <label>Set Asking Price (ETH)</label>
+                    <div class="input-group" style="margin-bottom: 2.5rem;">
+                        <label>Listing Price (ETH)</label>
                         <input type="number" id="listPrice" class="input-field" placeholder="0.00">
                     </div>
-                    <div style="display: flex; gap: 1rem;">
-                        <button id="listBtn" class="cyber-btn btn-glow-primary" onclick="listForSale()" style="flex: 1;">LIST FOR SALE</button>
-                        <button id="delistBtn" class="cyber-btn btn-outline" onclick="delistLand()" style="flex: 1;">CANCEL LISTING</button>
+                    <div style="display: flex; gap: 1rem; margin-bottom: 3rem;">
+                        <button id="listBtn" class="cyber-btn btn-glow-primary" onclick="listForSale()" style="flex: 1;">LIST</button>
+                        <button id="delistBtn" class="cyber-btn btn-outline" onclick="delistLand()" style="flex: 1;">DELIST</button>
                     </div>
-                    <hr style="margin: 2rem 0; border: 0; border-top: 1px solid rgba(255,255,255,0.05);">
+                    
                     <div class="input-group" style="margin-bottom: 1.5rem;">
-                        <label>Quick Purchase ID</label>
-                        <input type="number" id="buyTokenId" class="input-field" placeholder="Enter Token #">
+                        <label>Direct Acquisition ID</label>
+                        <input type="number" id="buyTokenId" class="input-field" placeholder="ID #">
                     </div>
-                    <button class="cyber-btn btn-glow-primary" onclick="buyLand()" style="width: 100%;">PURCHASE PROPERTY</button>
+                    <button class="cyber-btn btn-glow-primary" onclick="buyLand()" style="width: 100%;">ACQUIRE ASSET</button>
                 </div>
 
-                <div class="cyber-card" style="grid-column: span 7;">
-                    <div class="card-header">
-                        <h2><i class="fas fa-list"></i> Market Explorer</h2>
-                        <div style="display: flex; gap: 0.5rem;">
-                            <input type="text" id="marketSearch" class="input-field" placeholder="Search..." style="padding: 0.5rem 1rem; font-size: 0.8rem; width: 150px;" onkeyup="filterMarketplace()">
-                            <select id="marketSort" class="input-field" style="padding: 0.5rem 1rem; font-size: 0.8rem; width: 120px;" onchange="filterMarketplace()">
+                <div class="cyber-card">
+                    <div class="card-header" style="flex-direction: row; align-items: center; justify-content: space-between;">
+                        <h2>Live Market Terminal</h2>
+                        <div style="display: flex; gap: 1rem;">
+                            <input type="text" id="marketSearch" class="input-field" placeholder="Filter location..." style="padding: 0.75rem 1.25rem; font-size: 0.85rem; width: 200px;" onkeyup="filterMarketplace()">
+                            <select id="marketSort" class="input-field" style="padding: 0.75rem 1.25rem; font-size: 0.85rem;" onchange="filterMarketplace()">
                                 <option value="newest">Recent</option>
                                 <option value="priceLow">Price ↑</option>
                                 <option value="priceHigh">Price ↓</option>
                             </select>
                         </div>
                     </div>
-                    <div id="marketplaceList" style="display: grid; gap: 1rem;"></div>
+                    <div id="marketplaceList" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;"></div>
                 </div>
             </div>
         </section>
 
         <section id="mylandsTab" class="tab-content" style="display: none;">
-            <div class="cyber-card" style="margin-bottom: 2rem;">
+            <div class="cyber-card" style="margin-bottom: 2.5rem;">
                 <div class="card-header">
-                    <h2><i class="fas fa-briefcase"></i> My Property Portfolio</h2>
+                    <h2>Verified Asset Portfolio</h2>
                 </div>
-                <div id="myLandsList" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;"></div>
+                <div id="myLandsList" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;"></div>
             </div>
 
             <div class="cyber-card">
-                <div class="card-header">
-                    <h2><i class="fas fa-search"></i> Property Inspector</h2>
+                <div class="card-header" style="flex-direction: row; align-items: center; justify-content: space-between;">
+                    <h2>Asset Inspector</h2>
                     <div style="display: flex; gap: 1rem;">
-                        <input type="number" id="viewTokenId" class="input-field" placeholder="Token #" style="width: 120px;">
-                        <button class="cyber-btn btn-glow-primary" onclick="viewLand()" style="padding: 0.5rem 1.5rem;">VIEW DETAILS</button>
+                        <input type="number" id="viewTokenId" class="input-field" placeholder="Token ID" style="width: 150px;">
+                        <button class="cyber-btn btn-glow-primary" onclick="viewLand()" style="padding: 0.75rem 2rem;">INSPECT</button>
                     </div>
                 </div>
                 <div id="landDetails"></div>
@@ -188,34 +183,33 @@
         </section>
 
         <section id="transferTab" class="tab-content" style="display: none;">
-            <div class="cyber-card" style="max-width: 600px; margin: 0 auto;">
+            <div class="cyber-card" style="max-width: 700px; margin: 0 auto;">
                 <div class="card-header">
-                    <h2><i class="fas fa-exchange-alt"></i> Ownership Transfer</h2>
+                    <h2>Secure Asset Transfer</h2>
                 </div>
                 <div class="input-group" style="margin-bottom: 1.5rem;">
-                    <label>Property Token ID</label>
-                    <input type="number" id="transferTokenId" class="input-field" placeholder="Token #">
+                    <label>Token ID to Transfer</label>
+                    <input type="number" id="transferTokenId" class="input-field" placeholder="ID #">
                 </div>
-                <div class="input-group" style="margin-bottom: 2rem;">
-                    <label>Recipient's Wallet Address</label>
+                <div class="input-group" style="margin-bottom: 2.5rem;">
+                    <label>Recipient Wallet Address</label>
                     <input type="text" id="newOwner" class="input-field" placeholder="0x...">
                 </div>
                 <button id="transferBtn" class="cyber-btn btn-glow-primary" onclick="transferLand()" style="width: 100%;">
-                    <i class="fas fa-paper-plane"></i> SEND TRANSFER REQUEST
+                    <i class="fas fa-paper-plane"></i> INITIATE SECURE TRANSFER
                 </button>
             </div>
         </section>
 
-        <footer style="margin-top: 5rem; padding-bottom: 3rem; text-align: center; color: var(--text-dim); font-size: 0.8rem;">
-            <div style="font-family: 'JetBrains Mono', monospace; opacity: 0.5;">
-                CORE_ADDR: <span id="contractAddr" style="color: var(--accent-primary);">0x5FbDB2315678afecb367f032d93F642f64180aa3</span>
+        <footer style="margin-top: 6rem; padding-bottom: 4rem; text-align: center; border-top: 1px solid var(--border-glass); padding-top: 3rem;">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text-muted);">
+                CONTRACT_LOG: <span id="contractAddr" style="color: var(--accent-primary);">0x5FbDB2315678afecb367f032d93F642f64180aa3</span>
             </div>
         </footer>
     </main>
 
-    <!-- Dependencies -->
+    <!-- Web3 Dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
-    <!-- Custom JS -->
     <script src="app.js"></script>
 </body>
 </html>
