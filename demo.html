@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LandChain Demo | Blockchain Land Registry</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', monospace;
+            background: linear-gradient(135deg, #0A0A0F 0%, #1a1a2e 100%);
+            color: #f1f5f9;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            background: linear-gradient(135deg, #00F5D4, #8B5CF6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+        
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .demo-card {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 1.5rem;
+            border: 1px solid rgba(0,245,212,0.2);
+            transition: all 0.3s;
+        }
+        
+        .demo-card:hover {
+            transform: translateY(-5px);
+            border-color: #00F5D4;
+        }
+        
+        .demo-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #00F5D4;
+            margin-bottom: 1rem;
+        }
+        
+        .demo-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .demo-desc {
+            color: #94a3b8;
+            margin-bottom: 1rem;
+        }
+        
+        .video-container {
+            background: #000;
+            border-radius: 20px;
+            overflow: hidden;
+            margin: 2rem 0;
+            aspect-ratio: 16/9;
+        }
+        
+        .video-placeholder {
+            background: linear-gradient(135deg, #00F5D4, #8B5CF6);
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #00F5D4, #8B5CF6);
+            color: #0A0A0F;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,245,212,0.3);
+        }
+        
+        .badge {
+            background: rgba(0,245,212,0.1);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎬 LandChain Demo</h1>
+            <p style="color: #94a3b8;">Watch how blockchain revolutionizes land registration</p>
+        </div>
+
+        <div class="video-container">
+            <div class="video-placeholder">
+                <div style="text-align: center;">
+                    <i class="fas fa-play-circle" style="font-size: 4rem;"></i>
+                    <p style="margin-top: 1rem;">Demo Video Coming Soon</p>
+                    <p style="font-size: 0.875rem;">Watch the complete walkthrough</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo-grid">
+            <div class="demo-card">
+                <div class="demo-number">01</div>
+                <div class="demo-title">Connect Wallet</div>
+                <div class="demo-desc">Connect MetaMask to the Hardhat local network with test ETH accounts.</div>
+                <div class="badge">MetaMask Integration</div>
+            </div>
+
+            <div class="demo-card">
+                <div class="demo-number">02</div>
+                <div class="demo-title">Register Land</div>
+                <div class="demo-desc">Registrar mints a new NFT representing a land parcel with unique ID.</div>
+                <div class="badge">ERC721 Token</div>
+            </div>
+
+            <div class="demo-card">
+                <div class="demo-number">03</div>
+                <div class="demo-title">List for Sale</div>
+                <div class="demo-desc">Owner lists property on marketplace with a price in ETH.</div>
+                <div class="badge">Marketplace</div>
+            </div>
+
+            <div class="demo-card">
+                <div class="demo-number">04</div>
+                <div class="demo-title">Browse & Filter</div>
+                <div class="demo-desc">Search by location, sort by price, find your perfect property.</div>
+                <div class="badge">Advanced Search</div>
+            </div>
+
+            <div class="demo-card">
+                <div class="demo-number">05</div>
+                <div class="demo-title">Buy Property</div>
+                <div class="demo-desc">Purchase land with ETH, automatic ownership transfer.</div>
+                <div class="badge">Atomic Swap</div>
+            </div>
+
+            <div class="demo-card">
+                <div class="demo-number">06</div>
+                <div class="demo-title">Transfer Asset</div>
+                <div class="demo-desc">Securely transfer ownership to any Ethereum wallet.</div>
+                <div class="badge">Role-Based Access</div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 3rem;">
+            <a href="https://github.com/Eden-M16/Land-Registry-dapp" class="btn">
+                <i class="fab fa-github"></i> View Source Code
+            </a>
+            <a href="land-registry-pro.html" class="btn" style="margin-left: 1rem;">
+                <i class="fas fa-rocket"></i> Launch App
+            </a>
+        </div>
+
+        <footer>
+            <p style="color: #64748b;">Built with ❤️ on Ethereum Blockchain</p>
+            <p style="font-size: 0.75rem; margin-top: 1rem;">© 2026 LandChain - Decentralized Land Registry</p>
+        </footer>
+    </div>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</body>
+</html>
