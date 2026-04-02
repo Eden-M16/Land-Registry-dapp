@@ -1,356 +1,42 @@
+// Global state
 let web3;
 let contract;
-let account;
+let currentAccount;
+let isAdmin = false;
+let isRegistrar = false;
+let marketData = [];
 
-const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
-
-const contractABI = [
-    {
-      "inputs": [],
-      "stateMutability": "nonpayable",
-      "type": "constructor"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes32",
-          "name": "role",
-          "type": "bytes32"
-        },
-        {
-          "internalType": "address",
-          "name": "account",
-          "type": "address"
-        }
-      ],
-      "name": "grantRole",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes32",
-          "name": "role",
-          "type": "bytes32"
-        },
-        {
-          "internalType": "address",
-          "name": "account",
-          "type": "address"
-        }
-      ],
-      "name": "revokeRole",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes32",
-          "name": "role",
-          "type": "bytes32"
-        },
-        {
-          "internalType": "uint256",
-          "name": "index",
-          "type": "uint256"
-        }
-      ],
-      "name": "getRoleMember",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes32",
-          "name": "role",
-          "type": "bytes32"
-        }
-      ],
-      "name": "getRoleMemberCount",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes32",
-          "name": "role",
-          "type": "bytes32"
-        },
-        {
-          "internalType": "address",
-          "name": "account",
-          "type": "address"
-        }
-      ],
-      "name": "hasRole",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_owner",
-          "type": "address"
-        },
-        {
-          "internalType": "string",
-          "name": "_location",
-          "type": "string"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_area",
-          "type": "uint256"
-        },
-        {
-          "internalType": "string",
-          "name": "_ipfsHash",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "_parcelId",
-          "type": "string"
-        }
-      ],
-      "name": "mintLand",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_to",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_tokenId",
-          "type": "uint256"
-        }
-      ],
-      "name": "transferLand",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_tokenId",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_price",
-          "type": "uint256"
-        }
-      ],
-      "name": "listForSale",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_tokenId",
-          "type": "uint256"
-        }
-      ],
-      "name": "delist",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_tokenId",
-          "type": "uint256"
-        }
-      ],
-      "name": "buyLand",
-      "outputs": [],
-      "stateMutability": "payable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_tokenId",
-          "type": "uint256"
-        }
-      ],
-      "name": "getLandDetails",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "location",
-          "type": "string"
-        },
-        {
-          "internalType": "uint256",
-          "name": "area",
-          "type": "uint256"
-        },
-        {
-          "internalType": "string",
-          "name": "ipfsHash",
-          "type": "string"
-        },
-        {
-          "internalType": "address",
-          "name": "owner",
-          "type": "address"
-        },
-        {
-          "internalType": "bool",
-          "name": "isVerified",
-          "type": "bool"
-        },
-        {
-          "internalType": "uint256",
-          "name": "price",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "timestamp",
-          "type": "uint256"
-        },
-        {
-          "internalType": "string",
-          "name": "parcelId",
-          "type": "string"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_tokenId",
-          "type": "uint256"
-        }
-      ],
-      "name": "getTransactionHistory",
-      "outputs": [
-        {
-          "components": [
-            {
-              "internalType": "uint256",
-              "name": "transactionId",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "tokenId",
-              "type": "uint256"
-            },
-            {
-              "internalType": "address",
-              "name": "from",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "to",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "price",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "timestamp",
-              "type": "uint256"
-            }
-          ],
-          "internalType": "struct LandRegistry.Transaction[]",
-          "name": "",
-          "type": "tuple[]"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_owner",
-          "type": "address"
-        }
-      ],
-      "name": "getLandsByOwner",
-      "outputs": [
-        {
-          "internalType": "uint256[]",
-          "name": "",
-          "type": "uint256[]"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    }
-];
-
+// Configuration
 const REGISTRAR_ROLE = "0x2db35252033621419a4e414c776034e34e565985860d5c0b06f8c77f0d0e7e9f";
 const DEFAULT_ADMIN_ROLE = "0x0000000000000000000000000000000000000000000000000000000000000000";
-let isRegistrar = false;
-let isAdmin = false;
-let marketData = [];
+
+// Load contract configuration
+async function loadContractConfig() {
+    try {
+        const response = await fetch('/contract-address.json');
+        const config = await response.json();
+        const address = config.address;
+        
+        const abiResponse = await fetch('/artifacts/contracts/LandRegistry.sol/LandRegistry.json');
+        const contractJson = await abiResponse.json();
+        const abi = contractJson.abi;
+        
+        return { address, abi };
+    } catch (error) {
+        console.error("Configuration error:", error);
+        // Fallback for demo/dev
+        return { 
+            address: "0x5FbDB2315678afecb367f032d93F642f64180aa3", 
+            abi: [] // Should be loaded from file
+        };
+    }
+}
 
 // UI Helpers
 function showToast(message, type = 'info') {
     const container = document.getElementById('toastContainer');
     const toast = document.createElement('div');
-    toast.className = `terminal-toast`;
+    toast.className = 'terminal-toast';
     
     const colors = {
         success: 'var(--accent-success)',
@@ -359,117 +45,173 @@ function showToast(message, type = 'info') {
     };
     
     toast.style.borderLeftColor = colors[type] || colors.info;
-    
     toast.innerHTML = `
-        <div style="display: flex; gap: 10px; align-items: center;">
+        <div style="display: flex; gap: 12px; align-items: center;">
             <i class="fas fa-terminal" style="color: ${colors[type]}"></i>
-            <span style="color: #fff;">${message}</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;">${message}</span>
         </div>
     `;
     
     container.appendChild(toast);
     
+    // Also log to admin console if it exists
+    addAdminLog(message, type);
+
     setTimeout(() => {
         toast.style.opacity = '0';
-        toast.style.transform = 'translateX(100%)';
-        setTimeout(() => toast.remove(), 300);
+        toast.style.transform = 'translateY(20px)';
+        setTimeout(() => toast.remove(), 400);
     }, 4000);
 }
 
-function setBtnLoading(btnId, isLoading, text = '') {
+function addAdminLog(message, type = 'info') {
+    const logContainer = document.getElementById('adminLogs');
+    if (!logContainer) return;
+
+    const entry = document.createElement('div');
+    entry.className = 'log-entry';
+    const time = new Date().toLocaleTimeString();
+    
+    let typeClass = '';
+    if (type === 'success') typeClass = 'log-success';
+    else if (type === 'error') typeClass = 'log-error';
+
+    entry.innerHTML = `
+        <span class="log-time">[${time}]</span>
+        <span class="log-prefix">${type === 'error' ? 'ERR:' : 'SYS:'}</span>
+        <span class="${typeClass}">${message.toUpperCase()}</span>
+    `;
+
+    logContainer.prepend(entry);
+    
+    // Keep only last 50 logs
+    if (logContainer.children.length > 50) {
+        logContainer.lastElementChild.remove();
+    }
+}
+
+function setBtnLoading(btnId, isLoading) {
     const btn = document.getElementById(btnId);
     if (!btn) return;
     if (isLoading) {
         btn.disabled = true;
-        btn.dataset.originalText = btn.innerHTML;
-        btn.innerHTML = `<div class="cyber-loader"></div>`;
+        btn.dataset.original = btn.innerHTML;
+        btn.innerHTML = '<div class="cyber-loader"></div>';
     } else {
         btn.disabled = false;
-        btn.innerHTML = text || btn.dataset.originalText;
+        btn.innerHTML = btn.dataset.original;
     }
 }
 
-// Core Functions
-async function connectWallet() {
+// Web3 Core
+async function initWeb3() {
     if (window.ethereum) {
+        web3 = new Web3(window.ethereum);
         try {
-            web3 = new Web3(window.ethereum);
-            await window.ethereum.request({ method: 'eth_requestAccounts' });
             const accounts = await web3.eth.getAccounts();
-            account = accounts[0];
-            
-            contract = new web3.eth.Contract(contractABI, contractAddress);
-            
-            // Check roles
-            try {
-                const results = await Promise.all([
-                    contract.methods.hasRole(REGISTRAR_ROLE, account).call(),
-                    contract.methods.hasRole(DEFAULT_ADMIN_ROLE, account).call()
-                ]);
-                isRegistrar = results[0];
-                isAdmin = results[1];
-            } catch(e) { 
-                isRegistrar = false;
-                isAdmin = false; 
+            if (accounts.length > 0) {
+                currentAccount = accounts[0];
+                await setupContract();
             }
-
-            updateWalletUI();
-            showToast('SECURE CONNECTION ESTABLISHED', 'success');
-            
-            await refreshData();
         } catch (error) {
-            showToast('CONNECTION REFUSED: ' + error.message, 'error');
+            console.error("Web3 init error:", error);
         }
-    } else {
-        showToast('NEURAL LINK NOT FOUND (Install MetaMask)', 'error');
+    }
+}
+
+async function setupContract() {
+    const config = await loadContractConfig();
+    if (!config || !config.abi.length) {
+        // If ABI couldn't be fetched, we can't proceed
+        console.error("Contract ABI missing");
+        return;
+    }
+    
+    contract = new web3.eth.Contract(config.abi, config.address);
+    document.getElementById('contractAddr').textContent = config.address;
+    
+    await checkRoles();
+    updateWalletUI();
+    await refreshData();
+}
+
+async function connectWallet() {
+    if (!window.ethereum) {
+        showToast("MetaMask not detected", "error");
+        return;
+    }
+    try {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        currentAccount = accounts[0];
+        await setupContract();
+        showToast("Neural link established", "success");
+    } catch (error) {
+        showToast("Connection refused", "error");
+    }
+}
+
+async function checkRoles() {
+    if (!contract || !currentAccount) return;
+    try {
+        const [admin, registrar] = await Promise.all([
+            contract.methods.hasRole(DEFAULT_ADMIN_ROLE, currentAccount).call(),
+            contract.methods.hasRole(REGISTRAR_ROLE, currentAccount).call()
+        ]);
+        isAdmin = admin;
+        isRegistrar = registrar;
+    } catch (error) {
+        console.error("Role check error:", error);
     }
 }
 
 function updateWalletUI() {
     const walletInfo = document.getElementById('walletInfo');
-    const registerTabBtn = document.querySelector('.nav-item[onclick="showTab(\'register\')"]');
-    const adminTabBtn = document.querySelector('.nav-item[onclick="showTab(\'admin\')"]');
+    const registerTabBtn = document.querySelector('.nav-item[onclick*="register"]');
+    const adminTabLink = document.getElementById('adminTabLink');
 
-    if (account) {
-        let roleText = 'VERIFIED_USER';
-        if (isAdmin) roleText = 'SYSTEM_ADMIN';
-        else if (isRegistrar) roleText = 'REGISTRAR_AUTHORIZED';
+    if (currentAccount) {
+        let roleLabel = 'VERIFIED_USER';
+        let roleColor = 'var(--accent-primary)';
+        
+        if (isAdmin) {
+            roleLabel = 'SYSTEM_ADMIN';
+            roleColor = 'var(--accent-danger)';
+        } else if (isRegistrar) {
+            roleLabel = 'REGISTRAR';
+        }
 
         walletInfo.innerHTML = `
             <div class="status-dot"></div>
             <div style="display: flex; flex-direction: column;">
-                <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: 700;">${account.slice(0, 6)}...${account.slice(-4)}</span>
-                <span style="font-size: 0.6rem; color: ${isAdmin ? 'var(--accent-danger)' : 'var(--accent-primary)'}; letter-spacing: 1px; font-weight: 800;">
-                    ${roleText}
-                </span>
+                <span style="font-family: 'JetBrains Mono'; font-size: 0.85rem;">${currentAccount.slice(0, 6)}...${currentAccount.slice(-4)}</span>
+                <span style="font-size: 0.6rem; color: ${roleColor}; letter-spacing: 1px; font-weight: 800;">${roleLabel}</span>
             </div>
         `;
-        const ownerInput = document.getElementById('ownerAddress');
-        if (ownerInput) ownerInput.value = account;
 
-        // Manage sidebar tabs visibility
-        if (registerTabBtn) {
-            registerTabBtn.style.display = 'flex';
-            if (!isRegistrar && !isAdmin) { // Admins can also register
-                registerTabBtn.innerHTML = '<i class="fas fa-lock" style="font-size: 0.8rem; opacity: 0.5;"></i> <span>Registration</span>';
-                document.getElementById('registerContent').style.display = 'none';
-                document.getElementById('unauthorizedView').style.display = 'flex';
-            } else {
-                registerTabBtn.innerHTML = '<i class="fas fa-plus-circle"></i> <span>Registration</span>';
-                document.getElementById('registerContent').style.display = 'block';
-                document.getElementById('unauthorizedView').style.display = 'none';
-            }
+        if (document.getElementById('ownerAddress')) {
+            document.getElementById('ownerAddress').value = currentAccount;
         }
 
-        if (adminTabBtn) {
-            adminTabBtn.style.display = isAdmin ? 'flex' : 'none';
+        // Sidebar Visibility & Restricted States
+        if (isAdmin || isRegistrar) {
+            document.getElementById('registerContent').style.display = 'block';
+            document.getElementById('unauthorizedView').style.display = 'none';
+            if (registerTabBtn) registerTabBtn.innerHTML = '<i class="fas fa-plus-circle"></i><span>Registration</span>';
+        } else {
+            document.getElementById('registerContent').style.display = 'none';
+            document.getElementById('unauthorizedView').style.display = 'flex';
+            if (registerTabBtn) registerTabBtn.innerHTML = '<i class="fas fa-lock" style="opacity: 0.5;"></i><span>Registration</span>';
+        }
+
+        if (adminTabLink) {
+            adminTabLink.style.display = isAdmin ? 'flex' : 'none';
         }
     }
 }
 
+// Data Loading
 async function refreshData() {
     if (!contract) return;
-    
     await Promise.all([
         loadStats(),
         loadMyLands(),
@@ -478,236 +220,236 @@ async function refreshData() {
     ]);
 }
 
-async function refreshRoleMembers() {
-    if (!contract || !isAdmin) return;
-    
-    const list = document.getElementById('roleMembersList');
-    list.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 2rem;"><div class="cyber-loader" style="margin: 0 auto;"></div></td></tr>';
-    
+async function loadStats() {
     try {
-        const roles = [
-            { name: 'SYSTEM_ADMIN', hash: DEFAULT_ADMIN_ROLE },
-            { name: 'REGISTRAR', hash: REGISTRAR_ROLE }
-        ];
+        // This is a simplified way to get total count if your contract doesn't have a direct totalLands count
+        // For a real app, you'd use a Counter or a mapping
+        let totalCount = 0;
+        try {
+            // Placeholder: Assume token IDs start from 1
+            for(let i=1; i<100; i++) {
+                try {
+                    await contract.methods.ownerOf(i).call();
+                    totalCount++;
+                } catch(e) { break; }
+            }
+        } catch(e) {}
+        
+        document.getElementById('totalLands').textContent = totalCount.toString().padStart(2, '0');
+        
+        if (currentAccount) {
+            const myLands = await contract.methods.getLandsByOwner(currentAccount).call();
+            document.getElementById('yourLands').textContent = myLands.length.toString().padStart(2, '0');
+        }
+    } catch (e) { console.error("Stats error:", e); }
+}
+
+async function loadMarketplace() {
+    const list = document.getElementById('marketplaceList');
+    list.innerHTML = '<div class="cyber-loader"></div>';
+    
+    marketData = [];
+    try {
+        const listedIds = await contract.methods.getListedLands().call();
+        for (const id of listedIds) {
+            const land = await contract.methods.getLandDetails(id).call();
+            marketData.push({
+                id: id,
+                location: land.location,
+                area: land.area,
+                parcelId: land.parcelId,
+                owner: land.owner,
+                priceEth: web3.utils.fromWei(land.listedPrice, 'ether'),
+                timestamp: land.timestamp
+            });
+        }
+        filterMarketplace();
+    } catch (e) { console.error("Marketplace error:", e); }
+}
+
+function filterMarketplace() {
+    const search = document.getElementById('marketSearch').value.toLowerCase();
+    const sort = document.getElementById('marketSort').value;
+    const list = document.getElementById('marketplaceList');
+    
+    let filtered = marketData.filter(item => 
+        item.location.toLowerCase().includes(search) || 
+        item.parcelId.toLowerCase().includes(search) ||
+        item.id.toString().includes(search)
+    );
+    
+    // Sort logic
+    if (sort === 'priceLow') filtered.sort((a, b) => a.priceEth - b.priceEth);
+    else if (sort === 'priceHigh') filtered.sort((a, b) => b.priceEth - a.priceEth);
+    else filtered.sort((a, b) => b.timestamp - a.timestamp);
+    
+    if (filtered.length === 0) {
+        list.innerHTML = '<div style="grid-column: span 2; text-align: center; color: var(--text-muted); padding: 3rem;">NO ACTIVE LISTINGS MATCH SEARCH</div>';
+        return;
+    }
+    
+    list.innerHTML = filtered.map(item => `
+        <div class="asset-card">
+            <div class="asset-tag">#${item.id}</div>
+            <div class="asset-image-placeholder">
+                <i class="fas fa-map-marked-alt"></i>
+            </div>
+            <div class="asset-header">
+                <span class="asset-id" style="font-size: 1.1rem; color: #fff;">${item.location}</span>
+                <span class="asset-price">${item.priceEth} ETH</span>
+            </div>
+            <div class="asset-details" style="margin-bottom: 1.5rem;">
+                <div class="asset-detail-item">
+                    <i class="fas fa-barcode"></i>
+                    <span>PID: ${item.parcelId}</span>
+                </div>
+                <div class="asset-detail-item">
+                    <i class="fas fa-vector-square"></i>
+                    <span>${item.area} m²</span>
+                </div>
+            </div>
+            <button class="cyber-btn btn-primary" style="width: 100%; padding: 0.85rem; font-size: 0.9rem;" onclick="buyLand(${item.id})">
+                ACQUIRE ASSET
+            </button>
+        </div>
+    `).join('');
+}
+
+async function loadMyLands() {
+    const list = document.getElementById('myLandsList');
+    list.innerHTML = '<div class="cyber-loader"></div>';
+    try {
+        const lands = await contract.methods.getLandsByOwner(currentAccount).call();
+        if (lands.length === 0) {
+            list.innerHTML = '<div style="grid-column: span 3; text-align: center; color: var(--text-muted); padding: 3rem;">PORTFOLIO EMPTY</div>';
+            return;
+        }
         
         let html = '';
-        for (const role of roles) {
-            const count = await contract.methods.getRoleMemberCount(role.hash).call();
-            for (let i = 0; i < count; i++) {
-                const member = await contract.methods.getRoleMember(role.hash, i).call();
-                const isYou = member.toLowerCase() === account.toLowerCase();
-                
-                html += `
-                    <tr class="data-row">
-                        <td class="data-cell">
-                            <span style="font-family: 'JetBrains Mono', monospace;">${member}</span>
-                            ${isYou ? '<span style="color: var(--accent-primary); font-size: 0.7rem; margin-left: 8px;">(YOU)</span>' : ''}
-                        </td>
-                        <td class="data-cell">
-                            <span style="font-size: 0.7rem; padding: 4px 8px; border-radius: 4px; background: ${role.name === 'SYSTEM_ADMIN' ? 'rgba(247, 37, 133, 0.1)' : 'rgba(76, 201, 240, 0.1)'}; color: ${role.name === 'SYSTEM_ADMIN' ? 'var(--accent-danger)' : 'var(--accent-primary)'};">
-                                ${role.name}
-                            </span>
-                        </td>
-                        <td class="data-cell">
-                            <span style="color: var(--accent-success);"><i class="fas fa-check-circle"></i> ACTIVE</span>
-                        </td>
-                        <td class="data-cell" style="text-align: right;">
-                            ${!isYou ? `
-                                <button class="cyber-btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.75rem; border-color: var(--accent-danger); color: var(--accent-danger);" onclick="revokeFromList('${role.hash}', '${member}', '${role.name}')">
-                                    REVOKE ACCESS
-                                </button>
-                            ` : '<span style="color: var(--text-muted); font-size: 0.75rem;">IMMUTABLE</span>'}
-                        </td>
-                    </tr>
-                `;
-            }
+        for (const id of lands) {
+            const land = await contract.methods.getLandDetails(id).call();
+            const isListed = land.isListed;
+            html += `
+                <div class="asset-card">
+                    <div class="asset-tag" style="background: ${isListed ? 'rgba(0, 245, 212, 0.1)' : 'rgba(67, 97, 238, 0.1)'}; color: ${isListed ? 'var(--accent-primary)' : 'var(--accent-secondary)'};">
+                        ${isListed ? 'LISTED' : 'SECURED'}
+                    </div>
+                    <div class="asset-image-placeholder">
+                        <i class="fas fa-house-shield"></i>
+                    </div>
+                    <div class="asset-header">
+                        <span class="asset-id" style="font-size: 1.1rem; color: #fff;">${land.location}</span>
+                        <span class="asset-price">${isListed ? web3.utils.fromWei(land.listedPrice, 'ether') + ' ETH' : 'VALUED'}</span>
+                    </div>
+                    <div class="asset-details" style="margin-bottom: 1.5rem;">
+                        <div class="asset-detail-item">
+                            <i class="fas fa-barcode"></i>
+                            <span>TOKEN_ID: #${id}</span>
+                        </div>
+                        <div class="asset-detail-item">
+                            <i class="fas fa-vector-square"></i>
+                            <span>${land.area} m²</span>
+                        </div>
+                    </div>
+                    <button class="cyber-btn btn-outline" style="width: 100%; padding: 0.85rem; font-size: 0.9rem;" onclick="inspectAsset(${id})">
+                        INSPECT CERTIFICATE
+                    </button>
+                </div>
+            `;
         }
-        list.innerHTML = html || '<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">NO MEMBERS DETECTED</td></tr>';
-    } catch (e) {
-        console.error(e);
-        list.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--accent-danger);">FAILED TO LOAD PERSONNEL DATA</td></tr>';
-    }
+        list.innerHTML = html;
+    } catch (e) { console.error("MyLands error:", e); }
 }
 
-async function revokeFromList(roleHash, member, roleName) {
-    if (!contract || !isAdmin) return;
-    
-    if (confirm(`Are you sure you want to revoke ${roleName} access from ${member}?`)) {
-        try {
-            showToast(`REVOKING ${roleName} ACCESS...`, 'info');
-            await contract.methods.revokeRole(roleHash, member).send({ from: account });
-            showToast('ACCESS REVOKED SUCCESSFULLY', 'success');
-            await refreshRoleMembers();
-        } catch (e) {
-            showToast('REVOKE FAILED: ' + e.message, 'error');
-        }
-    }
-}
-
-async function loadStats() {
-    if (!contract || !account) return;
-    try {
-        const lands = await contract.methods.getLandsByOwner(account).call();
-        document.getElementById('yourLands').innerHTML = lands.length.toString().padStart(2, '0');
-        
-        let listedCount = 0;
-        let totalCount = 0;
-        
-        let emptyStreak = 0;
-        for (let i = 1; i <= 500; i++) {
-            try {
-                const land = await contract.methods.getLandDetails(i).call();
-                if (land.owner !== "0x0000000000000000000000000000000000000000") {
-                    totalCount++;
-                    if (land.price > 0) listedCount++;
-                    emptyStreak = 0;
-                } else {
-                    emptyStreak++;
-                }
-            } catch(e) { 
-                emptyStreak++;
-            }
-            if (emptyStreak >= 3) break;
-        }
-        
-        document.getElementById('totalLands').innerHTML = totalCount.toString().padStart(2, '0');
-        document.getElementById('listedLands').innerHTML = listedCount.toString().padStart(2, '0');
-    } catch(e) {
-        console.error('Stats error:', e);
-    }
-}
-
+// Transaction Functions
 async function registerLand() {
-    if (!contract) { showToast('AUTH_REQUIRED: Connect wallet', 'error'); return; }
-    
-    const owner = document.getElementById('ownerAddress').value;
+    if (!contract) return;
     const location = document.getElementById('location').value;
     const area = document.getElementById('area').value;
     const parcelId = document.getElementById('parcelId').value;
     
-    if (!owner || !location || !area || !parcelId) {
-        showToast('DATA_INCOMPLETE: Fill all fields', 'error');
+    if (!location || !area || !parcelId) {
+        showToast("Incomplete telemetry data", "error");
         return;
     }
     
     try {
         setBtnLoading('registerBtn', true);
-        const ipfsHash = "Qm" + Math.random().toString(36).substring(7);
-        await contract.methods.mintLand(owner, location, area, ipfsHash, parcelId).send({ from: account });
-        
-        showToast('ASSET_PROVISIONED_SUCCESSFULLY', 'success');
-        
-        document.getElementById('location').value = '';
-        document.getElementById('area').value = '';
-        document.getElementById('parcelId').value = '';
-        
+        const ipfsHash = "ipfs://Qm" + Math.random().toString(36).substring(7);
+        // Parameters: address to, string location, uint256 area, string parcelId, string tokenURI
+        await contract.methods.registerLand(currentAccount, location, area, parcelId, ipfsHash).send({ from: currentAccount });
+        showToast("Asset provisioned successfully", "success");
         await refreshData();
-    } catch (error) {
-        showToast('PROVISION_FAILED: ' + error.message, 'error');
+    } catch (e) {
+        showToast("Registration failed", "error");
     } finally {
         setBtnLoading('registerBtn', false);
     }
 }
 
 async function listForSale() {
-    if (!contract) { showToast('AUTH_REQUIRED', 'error'); return; }
-    
-    const tokenId = document.getElementById('listTokenId').value;
+    const id = document.getElementById('listTokenId').value;
     const price = document.getElementById('listPrice').value;
-    
-    if (!tokenId || !price) {
-        showToast('INPUT_REQUIRED: ID and Price', 'error');
-        return;
-    }
+    if(!id || !price) { showToast("ID and Price required", "error"); return; }
     
     try {
         setBtnLoading('listBtn', true);
         const priceWei = web3.utils.toWei(price, 'ether');
-        await contract.methods.listForSale(tokenId, priceWei).send({ from: account });
-        
-        showToast(`ASSET #${tokenId} LISTED @ ${price} ETH`, 'success');
-        document.getElementById('listTokenId').value = '';
-        document.getElementById('listPrice').value = '';
-        
+        await contract.methods.listForSale(id, priceWei).send({ from: currentAccount });
+        showToast("Asset listed for trade", "success");
         await refreshData();
-    } catch (error) {
-        showToast('LIST_FAILED: ' + error.message, 'error');
-    } finally {
-        setBtnLoading('listBtn', false);
-    }
+    } catch (e) { showToast("Listing failed", "error"); }
+    finally { setBtnLoading('listBtn', false); }
 }
 
 async function delistLand() {
-    if (!contract) { showToast('AUTH_REQUIRED', 'error'); return; }
-    
-    const tokenId = document.getElementById('listTokenId').value;
-    if (!tokenId) { showToast('ID_REQUIRED', 'error'); return; }
-    
+    const id = document.getElementById('listTokenId').value;
+    if(!id) { showToast("Token ID required", "error"); return; }
     try {
         setBtnLoading('delistBtn', true);
-        await contract.methods.delist(tokenId).send({ from: account });
-        showToast(`ASSET #${tokenId} DELISTED`, 'success');
+        await contract.methods.delistLand(id).send({ from: currentAccount });
+        showToast("Listing revoked", "success");
         await refreshData();
-    } catch (error) {
-        showToast('DELIST_FAILED: ' + error.message, 'error');
-    } finally {
-        setBtnLoading('delistBtn', false);
-    }
+    } catch (e) { showToast("Delisting failed", "error"); }
+    finally { setBtnLoading('delistBtn', false); }
 }
 
-async function buyLand(tokenId) {
-    if (!contract) { showToast('AUTH_REQUIRED', 'error'); return; }
-    
-    const id = tokenId || document.getElementById('buyTokenId').value;
-    if (!id) { showToast('ID_REQUIRED', 'error'); return; }
+async function buyLand(id) {
+    const tokenId = id || document.getElementById('buyTokenId').value;
+    if(!tokenId) { showToast("Token ID required", "error"); return; }
     
     try {
-        const land = await contract.methods.getLandDetails(id).call();
-        if (land.price == 0) { showToast('ASSET_NOT_FOR_SALE', 'error'); return; }
+        const land = await contract.methods.getLandDetails(tokenId).call();
+        if(!land.isListed) { showToast("Asset not for sale", "error"); return; }
         
-        showToast('ACQUIRING_ASSET...', 'info');
-        await contract.methods.buyLand(id).send({ from: account, value: land.price });
-        
-        showToast(`ACQUISITION_COMPLETE: Asset #${id}`, 'success');
+        showToast("Processing acquisition...", "info");
+        await contract.methods.buyLand(tokenId).send({ from: currentAccount, value: land.listedPrice });
+        showToast("Asset acquired successfully", "success");
         await refreshData();
-    } catch (error) {
-        showToast('ACQUISITION_FAILED: ' + error.message, 'error');
-    }
+    } catch (e) { showToast("Acquisition failed", "error"); }
 }
 
 async function transferLand() {
-    if (!contract) { showToast('AUTH_REQUIRED', 'error'); return; }
-    
-    const tokenId = document.getElementById('transferTokenId').value;
-    const newOwner = document.getElementById('newOwner').value;
-    
-    if (!tokenId || !newOwner) {
-        showToast('DATA_REQUIRED: ID and Recipient', 'error');
-        return;
-    }
+    const id = document.getElementById('transferTokenId').value;
+    const to = document.getElementById('newOwner').value;
+    if(!id || !to) { showToast("ID and Recipient required", "error"); return; }
     
     try {
         setBtnLoading('transferBtn', true);
-        await contract.methods.transferLand(newOwner, tokenId).send({ from: account });
-        showToast(`HANDSHAKE_COMPLETE: Asset #${tokenId} transferred`, 'success');
-        
-        document.getElementById('transferTokenId').value = '';
-        document.getElementById('newOwner').value = '';
-        
+        await contract.methods.transferLand(to, id).send({ from: currentAccount });
+        showToast("Ownership migration complete", "success");
         await refreshData();
-    } catch (error) {
-        showToast('TRANSFER_FAILED: ' + error.message, 'error');
-    } finally {
-        setBtnLoading('transferBtn', false);
-    }
+    } catch (e) { showToast("Transfer failed", "error"); }
+    finally { setBtnLoading('transferBtn', false); }
 }
 
 async function viewLand() {
-    if (!contract) { showToast('AUTH_REQUIRED', 'error'); return; }
-    
-    const tokenId = document.getElementById('viewTokenId').value;
-    if (!tokenId) { showToast('ID_REQUIRED', 'error'); return; }
-    
+    const id = document.getElementById('viewTokenId').value;
+    if(!id) { showToast("Token ID required", "error"); return; }
+    await inspectAsset(id);
+}
+
+async function inspectAsset(tokenId) {
     try {
         const [land, history] = await Promise.all([
             contract.methods.getLandDetails(tokenId).call(),
@@ -720,217 +462,167 @@ async function viewLand() {
         let historyHtml = '';
         if (history && history.length > 0) {
             historyHtml = `
-                <div style="margin-top: 2rem;">
-                    <h4 style="margin-bottom: 1rem; color: var(--accent-primary); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px;">
-                        [ ARCHIVED_LOGS ]
-                    </h4>
-                    <div style="overflow-x: auto;">
-                        <table class="data-table">
-                            <thead>
-                                <tr style="color: var(--text-dim); text-align: left; font-size: 0.7rem; text-transform: uppercase;">
-                                    <th style="padding: 0.5rem;">Source</th>
-                                    <th style="padding: 0.5rem;">Dest</th>
-                                    <th style="padding: 0.5rem;">Val</th>
-                                    <th style="padding: 0.5rem;">Timestamp</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${history.map(tx => `
-                                    <tr class="data-row">
-                                        <td class="data-cell id-tag" style="font-size: 0.7rem;">${tx.from.slice(0,6)}...</td>
-                                        <td class="data-cell id-tag" style="font-size: 0.7rem;">${tx.to.slice(0,6)}...</td>
-                                        <td class="data-cell" style="font-size: 0.7rem; color: var(--accent-success);">${web3.utils.fromWei(tx.price, 'ether')}</td>
-                                        <td class="data-cell" style="font-size: 0.7rem; color: var(--text-dim);">${new Date(Number(tx.timestamp) * 1000).toLocaleDateString()}</td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
+                <div style="margin-top: 3rem; border-top: 1px solid var(--border-glass); padding-top: 2rem;">
+                    <div class="cert-label" style="margin-bottom: 1.5rem;">Audit Trail / History</div>
+                    <div style="display: grid; gap: 1rem;">
+                        ${history.map(tx => `
+                            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; background: rgba(255,255,255,0.02); padding: 1rem; border-radius: 12px;">
+                                <div>
+                                    <span style="color: var(--text-muted);">FROM:</span> ${tx.from.slice(0,10)}...
+                                    <span style="color: var(--text-muted); margin-left: 1rem;">TO:</span> ${tx.to.slice(0,10)}...
+                                </div>
+                                <div style="color: var(--accent-primary); font-family: 'JetBrains Mono';">
+                                    ${web3.utils.fromWei(tx.price, 'ether')} ETH
+                                </div>
+                            </div>
+                        `).join('')}
                     </div>
                 </div>
             `;
         }
 
         document.getElementById('landDetails').innerHTML = `
-            <div class="cyber-card" style="margin-top: 1.5rem; border-left: 2px solid var(--accent-primary);">
-                <div class="card-header">
-                    <span class="id-tag">ASSET_ID: #${tokenId}</span>
-                    <span style="color: var(--accent-success); font-weight: 800;">${priceEth} ETH</span>
+            <div class="certificate-container">
+                <div class="certificate-watermark">VERIFIED</div>
+                <div class="cert-header">
+                    <div>
+                        <div class="cert-label">Certificate of Digital Title</div>
+                        <div style="font-size: 1.75rem; font-weight: 800; color: var(--accent-primary); margin-top: 0.5rem;">
+                            ASSET_PROTOCOL: #${tokenId}
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div class="cert-label">Appraisal Value</div>
+                        <div class="price-tag" style="font-size: 1.75rem;">${priceEth} ETH</div>
+                    </div>
                 </div>
-                <div class="form-grid" style="font-size: 0.85rem;">
-                    <div><span style="color: var(--text-dim);">LOC:</span> ${land.location}</div>
-                    <div><span style="color: var(--text-dim);">AREA:</span> ${land.area} m²</div>
-                    <div><span style="color: var(--text-dim);">ROOT:</span> ${land.owner.slice(0,10)}...</div>
-                    <div><span style="color: var(--text-dim);">PID:</span> ${land.parcelId}</div>
-                    <div><span style="color: var(--text-dim);">VERIF:</span> ${land.isVerified ? 'YES' : 'NO'}</div>
-                    <div><span style="color: var(--text-dim);">SYNC:</span> ${date}</div>
+                <div class="cert-grid">
+                    <div class="cert-item">
+                        <span class="cert-label">Legal Coordinates</span>
+                        <span class="cert-value">${land.location}</span>
+                    </div>
+                    <div class="cert-item">
+                        <span class="cert-label">Surface Area</span>
+                        <span class="cert-value">${land.area} m²</span>
+                    </div>
+                    <div class="cert-item">
+                        <span class="cert-label">Digital Custodian</span>
+                        <span class="cert-value" style="font-family: 'JetBrains Mono'; font-size: 0.9rem;">${land.owner}</span>
+                    </div>
+                    <div class="cert-item">
+                        <span class="cert-label">Parcel Reference</span>
+                        <span class="cert-value">${land.parcelId}</span>
+                    </div>
+                    <div class="cert-item">
+                        <span class="cert-label">System Sync</span>
+                        <span class="cert-value">${date}</span>
+                    </div>
+                    <div class="cert-item">
+                        <span class="cert-label">Security Protocol</span>
+                        <span class="cert-value" style="color: var(--accent-success); display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-shield-check"></i> END_TO_END_ENCRYPTED
+                        </span>
+                    </div>
                 </div>
                 ${historyHtml}
             </div>
         `;
-    } catch (error) {
-        showToast('QUERY_FAILED: Asset not found', 'error');
-    }
+    } catch (e) { showToast("Asset query failed", "error"); }
 }
 
-async function loadMyLands() {
-    if (!contract || !account) return;
-    
-    const container = document.getElementById('myLandsList');
-    container.innerHTML = '<div class="cyber-loader" style="margin: 2rem auto;"></div>';
+// Admin Functions
+async function refreshRoleMembers() {
+    if (!isAdmin) return;
+    const list = document.getElementById('roleMembersList');
+    list.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 3rem;"><div class="cyber-loader" style="margin: 0 auto;"></div></td></tr>';
     
     try {
-        const lands = await contract.methods.getLandsByOwner(account).call();
+        // Since AccessControl is no longer enumerable, we can only verify specific accounts
+        // We will show the current user's status and provide an interface to verify others
+        const isUserAdmin = await contract.methods.hasRole(DEFAULT_ADMIN_ROLE, currentAccount).call();
+        const isUserRegistrar = await contract.methods.hasRole(REGISTRAR_ROLE, currentAccount).call();
         
-        if (lands.length === 0) {
-            container.innerHTML = '<p style="text-align: center; color: var(--text-dim); padding: 2rem; grid-column: span 2;">NO ASSETS DETECTED</p>';
-            return;
-        }
-        
-        let html = '';
-        for (const id of lands) {
-            const land = await contract.methods.getLandDetails(id).call();
-            const priceEth = web3.utils.fromWei(land.price, 'ether');
-            html += createLandItemHTML(id, land, priceEth, false);
-        }
-        container.innerHTML = html;
-    } catch(e) { 
-        container.innerHTML = '<p style="text-align: center; color: var(--accent-danger);">SYNC_ERROR</p>';
+        let html = `
+            <tr class="data-row">
+                <td class="data-cell">
+                    <span style="font-family: 'JetBrains Mono'; font-size: 0.9rem;">${currentAccount}</span>
+                    <span style="color: var(--accent-primary); font-size: 0.7rem; margin-left: 8px; font-weight: 800;">(YOU)</span>
+                </td>
+                <td class="data-cell">
+                    <div style="display: flex; gap: 4px;">
+                        ${isUserAdmin ? '<span class="role-pill admin">ADMIN</span>' : ''}
+                        ${isUserRegistrar ? '<span class="role-pill registrar">REGISTRAR</span>' : ''}
+                    </div>
+                </td>
+                <td class="data-cell">
+                    <span style="color: var(--accent-success); font-size: 0.8rem; display: flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-shield-check"></i> IDENTITY_VERIFIED
+                    </span>
+                </td>
+                <td class="data-cell" style="text-align: right;">
+                    <span style="color: var(--text-muted); font-size: 0.75rem; letter-spacing: 1px;">ROOT_IMMUTABLE</span>
+                </td>
+            </tr>
+        `;
+        list.innerHTML = html;
+        addAdminLog("Personnel audit synchronized with protocol state", "success");
+    } catch (e) { 
+        console.error("Personnel audit failed:", e); 
+        addAdminLog("Personnel audit synchronization failed", "error");
     }
-}
-
-async function loadMarketplace() {
-    if (!contract) return;
-    
-    const container = document.getElementById('marketplaceList');
-    container.innerHTML = '<div class="cyber-loader" style="margin: 2rem auto;"></div>';
-    
-    marketData = [];
-    
-    try {
-        for (let i = 1; i <= 100; i++) {
-            try {
-                const land = await contract.methods.getLandDetails(i).call();
-                if (land.owner !== "0x0000000000000000000000000000000000000000" && land.price > 0) {
-                    marketData.push({
-                        id: i,
-                        ...land,
-                        priceEth: web3.utils.fromWei(land.price, 'ether')
-                    });
-                }
-            } catch(e) { 
-                if (i > 10 && marketData.length === 0) break;
-                if (i > 50) break;
-            }
-        }
-        
-        filterMarketplace();
-    } catch(e) {
-        container.innerHTML = '<p style="text-align: center; color: var(--accent-danger);">TERMINAL_SYNC_FAILED</p>';
-    }
-}
-
-function filterMarketplace() {
-    const search = document.getElementById('marketSearch').value.toLowerCase();
-    const sort = document.getElementById('marketSort').value;
-    const container = document.getElementById('marketplaceList');
-    
-    let filtered = marketData.filter(item => 
-        item.location.toLowerCase().includes(search) || 
-        item.parcelId.toLowerCase().includes(search) ||
-        item.id.toString().includes(search)
-    );
-    
-    if (sort === 'priceLow') filtered.sort((a, b) => Number(a.price) - Number(b.price));
-    else if (sort === 'priceHigh') filtered.sort((a, b) => Number(b.price) - Number(a.price));
-    else filtered.sort((a, b) => Number(b.timestamp) - Number(a.timestamp));
-    
-    if (filtered.length === 0) {
-        container.innerHTML = '<p style="text-align: center; color: var(--text-dim); padding: 2rem;">NO_MATCHING_DATA</p>';
-        return;
-    }
-    
-    let html = '';
-    for (const item of filtered) {
-        html += createLandItemHTML(item.id, item, item.priceEth, true);
-    }
-    container.innerHTML = html;
-}
-
-function createLandItemHTML(id, land, price, isMarketplace) {
-    return `
-        <div class="asset-card">
-            <div class="asset-header">
-                <span class="id-tag">TOKEN_ID: #${id}</span>
-                <span class="price-tag">${price} ETH</span>
-            </div>
-            <div style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 1.5rem;">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <i class="fas fa-map-marker-alt" style="color: var(--accent-primary); width: 14px;"></i>
-                    <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${land.location}</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
-                    <i class="fas fa-barcode" style="color: var(--accent-primary); width: 14px;"></i>
-                    <span>PID: ${land.parcelId}</span>
-                </div>
-            </div>
-            ${isMarketplace ? `
-                <button class="cyber-btn btn-glow-primary" style="padding: 0.75rem; font-size: 0.85rem; width: 100%; border-radius: 12px;" onclick="buyLand(${id})">
-                    ACQUIRE ASSET
-                </button>
-            ` : ''}
-        </div>
-    `;
 }
 
 async function manageRole(action) {
-    if (!contract || !isAdmin) { showToast('ADMIN_PRIVILEGE_REQUIRED', 'error'); return; }
-    
-    const accountAddr = document.getElementById('roleAccount').value;
+    const address = document.getElementById('roleAccount').value;
     const roleType = document.getElementById('roleSelect').value;
     const roleHash = roleType === 'ADMIN' ? DEFAULT_ADMIN_ROLE : REGISTRAR_ROLE;
     
-    if (!web3.utils.isAddress(accountAddr)) {
-        showToast('INVALID_ADDRESS', 'error');
+    if (!web3.utils.isAddress(address)) {
+        showToast("Invalid identity address", "error");
         return;
     }
     
     try {
         setBtnLoading(action === 'grant' ? 'grantBtn' : 'revokeBtn', true);
         const method = action === 'grant' ? 'grantRole' : 'revokeRole';
-        
-        await contract.methods[method](roleHash, accountAddr).send({ from: account });
-        
-        showToast(`${roleType}_ROLE ${action.toUpperCase()}ED TO ${accountAddr.slice(0,6)}...`, 'success');
-        
-        const log = document.getElementById('adminLogs');
-        const entry = document.createElement('div');
-        entry.style.color = action === 'grant' ? 'var(--accent-success)' : 'var(--accent-danger)';
-        entry.innerHTML = `> ROLE_${action.toUpperCase()}: ${roleType} -> ${accountAddr.slice(0,10)}...`;
-        log.prepend(entry);
-        
-        document.getElementById('roleAccount').value = '';
-    } catch (error) {
-        showToast('ADMIN_OPERATION_FAILED: ' + error.message, 'error');
+        await contract.methods[method](roleHash, address).send({ from: currentAccount });
+        showToast(`Authorization ${action}ed successfully`, "success");
+        await refreshRoleMembers();
+    } catch (e) {
+        showToast("Administrative failure", "error");
     } finally {
         setBtnLoading(action === 'grant' ? 'grantBtn' : 'revokeBtn', false);
     }
 }
 
+async function revokeFromList(roleHash, member) {
+    if (!isAdmin) return;
+    if (confirm(`INITIATE ACCESS REVOCATION FOR ${member}?`)) {
+        try {
+            showToast("Revoking authorization...", "info");
+            await contract.methods.revokeRole(roleHash, member).send({ from: currentAccount });
+            showToast("Access revoked successfully", "success");
+            await refreshRoleMembers();
+        } catch (e) { showToast("Revocation failed", "error"); }
+    }
+}
+
+// Tab Management
 function showTab(tabName) {
     const sections = ['register', 'marketplace', 'mylands', 'transfer', 'admin'];
     const titles = {
-        register: 'Property Registration',
-        marketplace: 'Premium Real Estate Market',
-        mylands: 'Asset Portfolio',
-        transfer: 'Secure Asset Transfer',
-        admin: 'System Administration'
+        register: 'Property Registry',
+        marketplace: 'Premium Asset Market',
+        mylands: 'My Asset Portfolio',
+        transfer: 'Secure Asset Migration',
+        admin: 'System Command Center'
     };
     const descs = {
-        register: 'Initialize new digital property titles with administrative blockchain verification.',
-        marketplace: 'Explore and acquire verified land parcels within the decentralized network.',
-        mylands: 'Monitor your current real estate holdings and manage verified titles.',
-        transfer: 'Execute high-security ownership migration to authorized recipient wallets.',
-        admin: 'Manage system-level roles and administrative privileges.'
+        register: 'Official portal for blockchain-verified land titles.',
+        marketplace: 'Real-time peer-to-peer asset exchange protocol.',
+        mylands: 'Monitor and manage your verified real estate holdings.',
+        transfer: 'Initiate high-security ownership migration.',
+        admin: 'Global protocol management and personnel audit.'
     };
 
     sections.forEach(s => {
@@ -941,37 +633,44 @@ function showTab(tabName) {
     const activeEl = document.getElementById(tabName + 'Tab');
     if (activeEl) activeEl.style.display = 'block';
     
-    const titleEl = document.getElementById('activeTabTitle');
-    const descEl = document.getElementById('activeTabDesc');
-    if (titleEl) titleEl.innerText = titles[tabName];
-    if (descEl) descEl.innerText = descs[tabName];
+    document.getElementById('activeTabTitle').innerText = titles[tabName];
+    document.getElementById('activeTabDesc').innerText = descs[tabName];
 
     document.querySelectorAll('.nav-item').forEach(item => {
         item.classList.remove('active');
-        const onclick = item.getAttribute('onclick');
-        if (onclick && onclick.includes(`'${tabName}'`)) {
+        if (item.getAttribute('onclick').includes(`'${tabName}'`)) {
             item.classList.add('active');
         }
     });
     
     if (tabName === 'marketplace') loadMarketplace();
     if (tabName === 'mylands') loadMyLands();
+    if (tabName === 'admin') refreshRoleMembers();
 }
+
+// Initialize
+window.addEventListener('load', async () => {
+    await initWeb3();
+    showTab('register');
+});
 
 // Event Listeners
 if (window.ethereum) {
-    window.ethereum.on('accountsChanged', (accounts) => {
-        if (accounts.length > 0) {
-            account = accounts[0];
-            updateWalletUI();
-            refreshData();
-        } else {
-            location.reload();
-        }
-    });
-    window.ethereum.on('chainChanged', () => location.reload());
+    window.ethereum.on('accountsChanged', () => window.location.reload());
+    window.ethereum.on('chainChanged', () => window.location.reload());
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    showTab('register');
-});
+// Global Exports
+window.connectWallet = connectWallet;
+window.showTab = showTab;
+window.registerLand = registerLand;
+window.listForSale = listForSale;
+window.delistLand = delistLand;
+window.buyLand = buyLand;
+window.transferLand = transferLand;
+window.viewLand = viewLand;
+window.inspectAsset = inspectAsset;
+window.manageRole = manageRole;
+window.refreshRoleMembers = refreshRoleMembers;
+window.revokeFromList = revokeFromList;
+window.filterMarketplace = filterMarketplace;

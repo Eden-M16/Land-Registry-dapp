@@ -1,21 +1,21 @@
 {
   "name": "land-registry",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "compile": "npx hardhat compile",
+    "node": "npx hardhat node",
+    "deploy": "npx hardhat run scripts/deploy.cjs --network localhost",
+    "start": "node server.js",
+    "dev": "concurrently \"npm run node\" \"npm run deploy\" \"npm run start\""
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "module",
   "dependencies": {
-    "@openzeppelin/contracts": "^4.9.6",
-    "dotenv": "^17.3.1"
+    "@nomicfoundation/hardhat-toolbox": "^3.0.0",
+    "@openzeppelin/contracts": "^4.9.3",
+    "dotenv": "^17.3.1",
+    "express": "^4.18.2",
+    "hardhat": "^2.17.0"
   },
   "devDependencies": {
-    "@nomicfoundation/hardhat-toolbox": "^2.0.0",
-    "hardhat": "^2.22.0"
+    "concurrently": "^9.2.1"
   }
 }

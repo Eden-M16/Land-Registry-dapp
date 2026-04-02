@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LandChain | Premium Registry</title>
+    <title>LandChain | Premium Asset Registry</title>
     
     <!-- Premium Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -21,8 +21,11 @@
 
     <aside class="sidebar">
         <div class="brand">
-            <div class="brand-icon"><i class="fas fa-gem"></i></div>
-            <span class="brand-name">LANDCHAIN</span>
+            <div class="brand-icon"><i class="fas fa-link"></i></div>
+            <div class="brand-text">
+                <span class="brand-name">LANDCHAIN</span>
+                <span class="brand-tagline">Registry Protocol</span>
+            </div>
         </div>
 
         <nav>
@@ -65,12 +68,14 @@
                 <p id="activeTabDesc">Official portal for blockchain-verified land titles.</p>
             </div>
             
-            <div class="status-badge" style="background: rgba(0, 245, 212, 0.05); border: 1px solid rgba(0, 245, 212, 0.2); padding: 0.5rem 1.25rem; border-radius: 100px; color: var(--accent-success); font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
-                <div class="status-dot"></div> MAINNET_NODE_SYNCED
+            <div class="brand-badge">
+                <div class="status-badge">
+                    <div class="status-dot"></div> PROTOCOL_V1_ACTIVE
+                </div>
             </div>
         </header>
 
-        <!-- Stats Section -->
+        <!-- Dashboard Stats -->
         <div class="stats-row">
             <div class="stat-widget">
                 <span class="stat-label">Total Assets</span>
@@ -87,35 +92,37 @@
             <div class="stat-widget">
                 <span class="stat-label">Network Load</span>
                 <div class="stat-value">0.02s</div>
+                <div class="network-visualizer">
+                    <div class="vis-bar" style="animation-delay: 0.1s"></div>
+                    <div class="vis-bar" style="animation-delay: 0.3s"></div>
+                    <div class="vis-bar" style="animation-delay: 0.5s"></div>
+                    <div class="vis-bar" style="animation-delay: 0.2s"></div>
+                    <div class="vis-bar" style="animation-delay: 0.4s"></div>
+                    <div class="vis-bar" style="animation-delay: 0.6s"></div>
+                </div>
             </div>
         </div>
 
-        <!-- Dynamic Content -->
+        <!-- Dynamic Sections -->
         <section id="registerTab" class="tab-content">
-            <!-- Unauthorized View (Hidden by default) -->
             <div id="unauthorizedView" style="display: none; height: 400px; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
                 <div style="font-size: 5rem; color: var(--accent-danger); opacity: 0.15; position: absolute; z-index: -1;">
                     <i class="fas fa-shield-alt"></i>
                 </div>
-                <h2 style="font-size: 2rem; margin-bottom: 1rem; color: var(--text-primary);">Restricted Access</h2>
+                <h2 style="font-size: 2rem; margin-bottom: 1rem;">Restricted Access</h2>
                 <p style="color: var(--text-secondary); max-width: 500px; line-height: 1.6;">
-                    This terminal is currently in <span style="color: var(--accent-primary); font-weight: 700;">READ_ONLY</span> mode. 
-                    Minting new property titles onto the blockchain requires <span style="color: var(--accent-primary);">REGISTRAR_ROLE</span> authorization. 
-                    Please contact the system administrator to request administrative privileges.
+                    This terminal is in <span style="color: var(--accent-primary); font-weight: 700;">READ_ONLY</span> mode. 
+                    Minting new titles requires <span style="color: var(--accent-primary);">REGISTRAR_ROLE</span> authorization.
                 </p>
                 <button class="cyber-btn btn-outline" style="margin-top: 2rem;" onclick="showTab('marketplace')">
                     EXPLORE MARKETPLACE
                 </button>
             </div>
 
-            <!-- Main Register Content -->
             <div id="registerContent">
                 <div class="cyber-card">
                     <div class="card-header">
-                        <div>
-                            <h2>Official Asset Registration</h2>
-                            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Provisioning a new digital land title requires administrative authorization.</p>
-                        </div>
+                        <h2><i class="fas fa-file-signature"></i> Official Asset Registration</h2>
                     </div>
                     <div class="form-grid">
                         <div class="input-group">
@@ -123,19 +130,19 @@
                             <input type="text" id="ownerAddress" class="input-field" placeholder="0x..." readonly>
                         </div>
                         <div class="input-group">
-                            <label>Geographic Coordinates / Location</label>
-                            <input type="text" id="location" class="input-field" placeholder="Lat, Long or Street Address">
+                            <label>Legal Location / Coordinates</label>
+                            <input type="text" id="location" class="input-field" placeholder="Lat, Long or Street">
                         </div>
                         <div class="input-group">
-                            <label>Total Land Area (m²)</label>
+                            <label>Land Area (m²)</label>
                             <input type="number" id="area" class="input-field" placeholder="e.g. 5000">
                         </div>
                         <div class="input-group">
-                            <label>Digital Parcel Reference</label>
-                            <input type="text" id="parcelId" class="input-field" placeholder="Official Survey ID">
+                            <label>Official Survey Reference</label>
+                            <input type="text" id="parcelId" class="input-field" placeholder="Unique Parcel ID">
                         </div>
                     </div>
-                    <button id="registerBtn" class="cyber-btn btn-glow-primary" onclick="registerLand()" style="margin-top: 3rem; width: 100%;">
+                    <button id="registerBtn" class="cyber-btn btn-primary" onclick="registerLand()" style="margin-top: 3rem; width: 100%;">
                         <i class="fas fa-check-circle"></i> FINALIZE REGISTRATION
                     </button>
                 </div>
@@ -143,33 +150,32 @@
         </section>
 
         <section id="marketplaceTab" class="tab-content" style="display: none;">
-            <div style="display: grid; grid-template-columns: 400px 1fr; gap: 2rem;">
-                <div class="cyber-card">
+            <div style="display: grid; grid-template-columns: 380px 1fr; gap: 2rem;">
+                <div class="cyber-card" style="height: fit-content;">
                     <div class="card-header">
-                        <h2>Trade Management</h2>
+                        <h2>Trade Controls</h2>
                     </div>
                     <div class="input-group" style="margin-bottom: 1.5rem;">
-                        <label>Property Token ID</label>
+                        <label>Asset Token ID</label>
                         <input type="number" id="listTokenId" class="input-field" placeholder="ID #">
                     </div>
                     <div class="input-group" style="margin-bottom: 2.5rem;">
-                        <label>Listing Price (ETH)</label>
+                        <label>Asking Price (ETH)</label>
                         <input type="number" id="listPrice" class="input-field" placeholder="0.00">
                     </div>
                     <div style="display: flex; gap: 1rem; margin-bottom: 3rem;">
-                        <button id="listBtn" class="cyber-btn btn-glow-primary" onclick="listForSale()" style="flex: 1;">LIST</button>
+                        <button id="listBtn" class="cyber-btn btn-primary" onclick="listForSale()" style="flex: 1;">LIST</button>
                         <button id="delistBtn" class="cyber-btn btn-outline" onclick="delistLand()" style="flex: 1;">DELIST</button>
                     </div>
-                    
                     <div class="input-group" style="margin-bottom: 1.5rem;">
-                        <label>Direct Acquisition ID</label>
+                        <label>Quick Acquisition ID</label>
                         <input type="number" id="buyTokenId" class="input-field" placeholder="ID #">
                     </div>
-                    <button class="cyber-btn btn-glow-primary" onclick="buyLand()" style="width: 100%;">ACQUIRE ASSET</button>
+                    <button class="cyber-btn btn-primary" onclick="buyLand()" style="width: 100%;">ACQUIRE ASSET</button>
                 </div>
 
                 <div class="cyber-card">
-                    <div class="card-header" style="flex-direction: row; align-items: center; justify-content: space-between;">
+                    <div class="card-header">
                         <h2>Live Market Terminal</h2>
                         <div style="display: flex; gap: 1rem;">
                             <input type="text" id="marketSearch" class="input-field" placeholder="Filter location..." style="padding: 0.75rem 1.25rem; font-size: 0.85rem; width: 200px;" onkeyup="filterMarketplace()">
@@ -180,7 +186,7 @@
                             </select>
                         </div>
                     </div>
-                    <div id="marketplaceList" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;"></div>
+                    <div id="marketplaceList" class="marketplace-grid"></div>
                 </div>
             </div>
         </section>
@@ -190,15 +196,15 @@
                 <div class="card-header">
                     <h2>Verified Asset Portfolio</h2>
                 </div>
-                <div id="myLandsList" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;"></div>
+                <div id="myLandsList" class="marketplace-grid"></div>
             </div>
 
             <div class="cyber-card">
-                <div class="card-header" style="flex-direction: row; align-items: center; justify-content: space-between;">
+                <div class="card-header">
                     <h2>Asset Inspector</h2>
                     <div style="display: flex; gap: 1rem;">
                         <input type="number" id="viewTokenId" class="input-field" placeholder="Token ID" style="width: 150px;">
-                        <button class="cyber-btn btn-glow-primary" onclick="viewLand()" style="padding: 0.75rem 2rem;">INSPECT</button>
+                        <button class="cyber-btn btn-primary" onclick="viewLand()" style="padding: 0.75rem 2rem;">INSPECT</button>
                     </div>
                 </div>
                 <div id="landDetails"></div>
@@ -208,7 +214,7 @@
         <section id="transferTab" class="tab-content" style="display: none;">
             <div class="cyber-card" style="max-width: 700px; margin: 0 auto;">
                 <div class="card-header">
-                    <h2>Secure Asset Transfer</h2>
+                    <h2>Secure Ownership Migration</h2>
                 </div>
                 <div class="input-group" style="margin-bottom: 1.5rem;">
                     <label>Token ID to Transfer</label>
@@ -218,55 +224,72 @@
                     <label>Recipient Wallet Address</label>
                     <input type="text" id="newOwner" class="input-field" placeholder="0x...">
                 </div>
-                <button id="transferBtn" class="cyber-btn btn-glow-primary" onclick="transferLand()" style="width: 100%;">
-                    <i class="fas fa-paper-plane"></i> INITIATE SECURE TRANSFER
+                <button id="transferBtn" class="cyber-btn btn-primary" onclick="transferLand()" style="width: 100%;">
+                    <i class="fas fa-paper-plane"></i> INITIATE TRANSFER
                 </button>
             </div>
         </section>
 
         <section id="adminTab" class="tab-content" style="display: none;">
-            <div class="grid-container">
-                <div class="cyber-card" style="grid-column: span 6;">
+            <div class="grid-container" style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 2rem;">
+                <div class="cyber-card" style="grid-column: span 5; border-left: 4px solid var(--accent-danger);">
                     <div class="card-header">
-                        <h2 style="color: var(--accent-danger);"><i class="fas fa-user-plus"></i> Role Provisioning</h2>
+                        <h2 style="color: var(--accent-danger);"><i class="fas fa-terminal"></i> Command</h2>
+                        <div class="status-badge" style="color: var(--accent-danger); border-color: var(--accent-danger);">LVL_0</div>
                     </div>
                     <div class="input-group" style="margin-bottom: 1.5rem;">
-                        <label>Target Account Address</label>
+                        <label>Protocol Identity</label>
                         <input type="text" id="roleAccount" class="input-field" placeholder="0x...">
                     </div>
                     <div class="input-group" style="margin-bottom: 2rem;">
-                        <label>Select Role</label>
+                        <label>Authorization Level</label>
                         <select id="roleSelect" class="input-field">
                             <option value="REGISTRAR">REGISTRAR_ROLE</option>
                             <option value="ADMIN">DEFAULT_ADMIN_ROLE</option>
                         </select>
                     </div>
-                    <div style="display: flex; gap: 1rem;">
-                        <button id="grantBtn" class="cyber-btn btn-glow-primary" style="flex: 1; background: var(--accent-success); color: #000;" onclick="manageRole('grant')">GRANT ROLE</button>
-                        <button id="revokeBtn" class="cyber-btn btn-outline" style="flex: 1; border-color: var(--accent-danger); color: var(--accent-danger);" onclick="manageRole('revoke')">REVOKE ROLE</button>
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <button id="grantBtn" class="cyber-btn btn-primary" onclick="manageRole('grant')">
+                            <i class="fas fa-user-plus"></i> GRANT PRIVILEGES
+                        </button>
+                        <button id="revokeBtn" class="cyber-btn btn-outline" style="border-color: var(--accent-danger); color: var(--accent-danger);" onclick="manageRole('revoke')">
+                            <i class="fas fa-user-minus"></i> REVOKE ACCESS
+                        </button>
                     </div>
                 </div>
 
-                <div class="cyber-card" style="grid-column: span 12; margin-top: 2rem;">
+                <div class="cyber-card" style="grid-column: span 7;">
+                    <div class="card-header">
+                        <h2><i class="fas fa-history"></i> System Logs</h2>
+                        <div class="status-badge">LIVE_MONITOR</div>
+                    </div>
+                    <div id="adminLogs" class="terminal-window">
+                        <div class="log-entry">
+                            <span class="log-time">[${new Date().toLocaleTimeString()}]</span>
+                            <span class="log-prefix">SYS:</span>
+                            <span class="log-success">Neural link established. Monitoring protocol events...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cyber-card" style="grid-column: span 12;">
                     <div class="card-header">
                         <h2><i class="fas fa-users-cog"></i> System Personnel Audit</h2>
                         <button class="cyber-btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.8rem;" onclick="refreshRoleMembers()">
-                            <i class="fas fa-sync-alt"></i> REFRESH LIST
+                            <i class="fas fa-sync-alt"></i> SYNC ROLES
                         </button>
                     </div>
                     <div style="overflow-x: auto;">
                         <table class="data-table">
                             <thead>
-                                <tr style="color: var(--text-muted); text-align: left; font-size: 0.8rem; text-transform: uppercase;">
-                                    <th style="padding: 1rem;">Member Address</th>
-                                    <th style="padding: 1rem;">Role Identity</th>
-                                    <th style="padding: 1rem;">Access Status</th>
-                                    <th style="padding: 1rem; text-align: right;">Management</th>
+                                <tr style="color: var(--text-muted); text-align: left; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px;">
+                                    <th style="padding: 1rem;">Protocol Identity</th>
+                                    <th style="padding: 1rem;">Access Level</th>
+                                    <th style="padding: 1rem;">Integrity</th>
+                                    <th style="padding: 1rem; text-align: right;">Authorization</th>
                                 </tr>
                             </thead>
-                            <tbody id="roleMembersList">
-                                <!-- Members will be listed here -->
-                            </tbody>
+                            <tbody id="roleMembersList"></tbody>
                         </table>
                     </div>
                 </div>
@@ -275,7 +298,7 @@
 
         <footer style="margin-top: 6rem; padding-bottom: 4rem; text-align: center; border-top: 1px solid var(--border-glass); padding-top: 3rem;">
             <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text-muted);">
-                CONTRACT_LOG: <span id="contractAddr" style="color: var(--accent-primary);">0x5FbDB2315678afecb367f032d93F642f64180aa3</span>
+                CONTRACT_IDENTITY: <span id="contractAddr" style="color: var(--accent-primary);">LOADING...</span>
             </div>
         </footer>
     </main>

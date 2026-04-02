@@ -1,54 +1,34 @@
 const hre = require("hardhat");
 
 async function main() {
-  console.log("🚀 Deploying LandRegistry...");
+  console.log("Deploying LandRegistry contract...");
   
   const LandRegistry = await hre.ethers.getContractFactory("LandRegistry");
   const landRegistry = await LandRegistry.deploy();
   
-  // For Hardhat 2, use deployed() instead of waitForDeployment()
-  await landRegistry.deployed();
+  await landRegistry.waitForDeployment();
   
-  const address = landRegistry.address;
-  console.log("✅ LandRegistry deployed to:", address);
+  const contractAddress = await landRegistry.getAddress();
+  console.log(`LandRegistry deployed to: ${contractAddress}`);
   
-  // Save contract address
+  // Save contract address to a file
   const fs = require("fs");
-  const config = {
-    contractAddress: address,
+  const contractAddressFile = "contract-address.json";
+  fs.writeFileSync(contractAddressFile, JSON.stringify({
+    address: contractAddress,
     network: hre.network.name,
-    deployedAt: new Date().toISOString()
-  };
+    timestamp: new Date().toISOString()
+  }, null, 2));
   
-  fs.writeFileSync("contract-address.json", JSON.stringify(config, null, 2));
-  console.log("💾 Address saved to contract-address.json");
+  console.log(`Contract address saved to ${contractAddressFile}`);
   
-  // Optional: Register a sample land
+  // Get the deployer address
   const [deployer] = await hre.ethers.getSigners();
-  console.log("\n📝 Registering a sample land...");
-  
-  const mintTx = await landRegistry.mintLand(
-    deployer.address,
-    "123 Blockchain Street, Metaverse City",
-    500,
-    "QmSampleHash123456",
-    "PAR001"
-  );
-  await mintTx.wait();
-  
-  console.log("✅ Sample land registered! Token ID: 1");
-  
-  // Get land details
-  const land = await landRegistry.getLandDetails(1);
-  console.log("\n📋 Land Details:");
-  console.log("  Owner:", land.owner);
-  console.log("  Location:", land.location);
-  console.log("  Area:", land.area.toString(), "sq meters");
-  console.log("  Parcel ID:", land.parcelId);
-  console.log("  Verified:", land.isVerified);
+  console.log(`Deployer address: ${deployer.address}`);
+  console.log("Deployer has DEFAULT_ADMIN_ROLE and REGISTRAR_ROLE");
 }
 
 main().catch((error) => {
-  console.error("❌ Deployment failed:", error);
+  console.error(error);
   process.exitCode = 1;
 });

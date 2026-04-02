@@ -1,3 +1,18 @@
+.exit
+console.log("Your ETH balance:", ethers.utils.formatEther(balance), "ETH");
+const balance = await ethers.provider.getBalance(yourWallet);
+console.log("✅ 10 ETH sent to your wallet!");
+await deployer.sendTransaction({ to: yourWallet, value: ethers.utils.parseEther("10") });
+const [deployer] = await ethers.getSigners();
+console.log("Admin:", isAdmin, "Registrar:", isRegistrar);
+const isRegistrar = await landRegistry.hasRole(registrarRole, yourWallet);
+const isAdmin = await landRegistry.hasRole(adminRole, yourWallet);
+await landRegistry.grantRole(registrarRole, yourWallet);
+await landRegistry.grantRole(adminRole, yourWallet);
+const registrarRole = await landRegistry.REGISTRAR_ROLE();
+const adminRole = await landRegistry.DEFAULT_ADMIN_ROLE();
+const yourWallet = "0xB88ba86BF853A14422a1Cd21221c8e59701b4A78";
+const landRegistry = await ethers.getContractAt("LandRegistry", "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0");
 cat artifacts/contracts/LandRegistry.sol/LandRegistry.json
 console.log(Object.keys(landRegistry.interface.functions))
 const totalSupply = await landRegistry.totalSupply()

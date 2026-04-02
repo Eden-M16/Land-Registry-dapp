@@ -1,204 +1,205 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
-contract LandRegistry is ERC721, AccessControlEnumerable {
+contract LandRegistry is ERC721, AccessControl {
     using Counters for Counters.Counter;
-    Counters.Counter private _tokenIds;
-    Counters.Counter private _transactionIds;
+    using Strings for uint256;
 
     bytes32 public constant REGISTRAR_ROLE = keccak256("REGISTRAR_ROLE");
-    
-    struct LandRecord {
+    Counters.Counter private _tokenIds;
+
+    struct Land {
+        uint256 id;
         string location;
         uint256 area;
-        string ipfsHash;
-        address owner;
-        bool isVerified;
-        uint256 price;
-        uint256 timestamp;
         string parcelId;
-    }
-    
-    struct Transaction {
-        uint256 transactionId;
-        uint256 tokenId;
-        address from;
-        address to;
-        uint256 price;
+        address owner;
+        uint256 listedPrice;
+        bool isListed;
         uint256 timestamp;
     }
-    
-    mapping(uint256 => LandRecord) public landRecords;
-    mapping(uint256 => Transaction[]) public landTransactions;
-    mapping(string => bool) public parcelIdExists;
-    
-    event LandMinted(uint256 indexed tokenId, address indexed owner, string location, string parcelId);
-    event LandTransferred(uint256 indexed tokenId, address indexed from, address indexed to, uint256 price);
+
+    mapping(uint256 => Land) public lands;
+    mapping(uint256 => string) private _tokenURIs;
+
+    event LandRegistered(uint256 indexed tokenId, address indexed owner, string location, uint256 area);
     event LandListed(uint256 indexed tokenId, uint256 price);
     event LandDelisted(uint256 indexed tokenId);
-    
-    constructor() ERC721("LandRegistryToken", "LAND") {
+    event LandTransferred(uint256 indexed tokenId, address indexed from, address indexed to);
+    event LandSold(uint256 indexed tokenId, address indexed seller, address indexed buyer, uint256 price);
+
+    constructor() ERC721("LandChain", "LAND") {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(REGISTRAR_ROLE, msg.sender);
     }
-    
-    modifier landExists(uint256 tokenId) {
-        require(_exists(tokenId), "Land does not exist");
-        _;
-    }
-    
-    modifier onlyLandOwner(uint256 tokenId) {
-        require(ownerOf(tokenId) == msg.sender, "Not the land owner");
-        _;
-    }
-    
-    function mintLand(
-        address _owner,
-        string memory _location,
-        uint256 _area,
-        string memory _ipfsHash,
-        string memory _parcelId
-    ) public onlyRole(REGISTRAR_ROLE) returns (uint256) {
-        require(!parcelIdExists[_parcelId], "Parcel ID already exists");
-        
-        _tokenIds.increment();
-        uint256 newTokenId = _tokenIds.current();
-        
-        _safeMint(_owner, newTokenId);
-        
-        landRecords[newTokenId] = LandRecord({
-            location: _location,
-            area: _area,
-            ipfsHash: _ipfsHash,
-            owner: _owner,
-            isVerified: true,
-            price: 0,
-            timestamp: block.timestamp,
-            parcelId: _parcelId
-        });
-        
-        parcelIdExists[_parcelId] = true;
-        
-        emit LandMinted(newTokenId, _owner, _location, _parcelId);
-        return newTokenId;
-    }
-    
-    function transferLand(address _to, uint256 _tokenId) public landExists(_tokenId) onlyLandOwner(_tokenId) {
-        require(_to != address(0), "Invalid address");
-        
-        address from = msg.sender;
-        safeTransferFrom(from, _to, _tokenId);
-        
-        landRecords[_tokenId].owner = _to;
-        landRecords[_tokenId].timestamp = block.timestamp;
-        
-        _recordTransaction(_tokenId, from, _to, 0);
-        
-        if (landRecords[_tokenId].price > 0) {
-            landRecords[_tokenId].price = 0;
-            emit LandDelisted(_tokenId);
-        }
-        
-        emit LandTransferred(_tokenId, from, _to, 0);
-    }
-    
-    function listForSale(uint256 _tokenId, uint256 _price) public landExists(_tokenId) onlyLandOwner(_tokenId) {
-        require(_price > 0, "Price must be greater than 0");
-        landRecords[_tokenId].price = _price;
-        emit LandListed(_tokenId, _price);
-    }
-    
-    function delist(uint256 _tokenId) public landExists(_tokenId) onlyLandOwner(_tokenId) {
-        landRecords[_tokenId].price = 0;
-        emit LandDelisted(_tokenId);
-    }
-    
-    function buyLand(uint256 _tokenId) public payable landExists(_tokenId) {
-        LandRecord storage land = landRecords[_tokenId];
-        address currentOwner = land.owner;
-        
-        require(msg.value >= land.price, "Insufficient funds sent");
-        require(land.price > 0, "Land is not for sale");
-        require(msg.sender != currentOwner, "Cannot buy your own land");
-        
-        (bool sent, ) = payable(currentOwner).call{value: land.price}("");
-        require(sent, "Failed to send Ether");
-        
-        safeTransferFrom(currentOwner, msg.sender, _tokenId);
-        
-        land.owner = msg.sender;
-        land.price = 0;
-        land.timestamp = block.timestamp;
-        
-        _recordTransaction(_tokenId, currentOwner, msg.sender, land.price);
-        
-        if (msg.value > land.price) {
-            (bool refundSent, ) = payable(msg.sender).call{value: msg.value - land.price}("");
-            require(refundSent, "Refund failed");
-        }
-        
-        emit LandTransferred(_tokenId, currentOwner, msg.sender, land.price);
-    }
-    
-    function _recordTransaction(uint256 _tokenId, address _from, address _to, uint256 _price) internal {
-        _transactionIds.increment();
-        landTransactions[_tokenId].push(Transaction({
-            transactionId: _transactionIds.current(),
-            tokenId: _tokenId,
-            from: _from,
-            to: _to,
-            price: _price,
-            timestamp: block.timestamp
-        }));
-    }
-    
-    function getLandDetails(uint256 _tokenId) public view returns (
+
+    function registerLand(
+        address to,
         string memory location,
         uint256 area,
-        string memory ipfsHash,
+        string memory parcelId,
+        string memory tokenURI
+    ) public onlyRole(REGISTRAR_ROLE) returns (uint256) {
+        require(to != address(0), "Invalid recipient");
+        require(bytes(location).length > 0, "Location required");
+        require(area > 0, "Area must be > 0");
+        require(bytes(parcelId).length > 0, "Parcel ID required");
+
+        _tokenIds.increment();
+        uint256 newTokenId = _tokenIds.current();
+
+        _safeMint(to, newTokenId);
+        _setTokenURI(newTokenId, tokenURI);
+
+        lands[newTokenId] = Land({
+            id: newTokenId,
+            location: location,
+            area: area,
+            parcelId: parcelId,
+            owner: to,
+            listedPrice: 0,
+            isListed: false,
+            timestamp: block.timestamp
+        });
+
+        emit LandRegistered(newTokenId, to, location, area);
+        return newTokenId;
+    }
+
+    function listForSale(uint256 tokenId, uint256 price) public {
+        require(ownerOf(tokenId) == msg.sender, "Not the owner");
+        require(price > 0, "Price must be > 0");
+        
+        lands[tokenId].listedPrice = price;
+        lands[tokenId].isListed = true;
+        
+        emit LandListed(tokenId, price);
+    }
+
+    function delistLand(uint256 tokenId) public {
+        require(ownerOf(tokenId) == msg.sender, "Not the owner");
+        
+        lands[tokenId].listedPrice = 0;
+        lands[tokenId].isListed = false;
+        
+        emit LandDelisted(tokenId);
+    }
+
+    function buyLand(uint256 tokenId) public payable {
+        Land storage land = lands[tokenId];
+        require(land.isListed, "Land not for sale");
+        require(msg.value >= land.listedPrice, "Insufficient payment");
+        require(ownerOf(tokenId) != msg.sender, "Cannot buy own land");
+        
+        address seller = ownerOf(tokenId);
+        
+        payable(seller).transfer(msg.value);
+        _transfer(seller, msg.sender, tokenId);
+        
+        land.owner = msg.sender;
+        land.isListed = false;
+        land.listedPrice = 0;
+        
+        emit LandSold(tokenId, seller, msg.sender, msg.value);
+    }
+
+    function transferLand(uint256 tokenId, address newOwner) public {
+        require(ownerOf(tokenId) == msg.sender, "Not the owner");
+        require(newOwner != address(0), "Invalid address");
+        
+        _transfer(msg.sender, newOwner, tokenId);
+        lands[tokenId].owner = newOwner;
+        
+        emit LandTransferred(tokenId, msg.sender, newOwner);
+    }
+
+    function getLandDetails(uint256 tokenId) public view returns (
+        uint256 id,
+        string memory location,
+        uint256 area,
+        string memory parcelId,
         address owner,
-        bool isVerified,
-        uint256 price,
-        uint256 timestamp,
-        string memory parcelId
+        uint256 listedPrice,
+        bool isListed,
+        uint256 timestamp
     ) {
-        LandRecord storage land = landRecords[_tokenId];
+        Land memory land = lands[tokenId];
         return (
+            land.id,
             land.location,
             land.area,
-            land.ipfsHash,
+            land.parcelId,
             land.owner,
-            land.isVerified,
-            land.price,
-            land.timestamp,
-            land.parcelId
+            land.listedPrice,
+            land.isListed,
+            land.timestamp
         );
     }
-    
-    function getTransactionHistory(uint256 _tokenId) public view returns (Transaction[] memory) {
-        return landTransactions[_tokenId];
-    }
-    
-    function getLandsByOwner(address _owner) public view returns (uint256[] memory) {
-        uint256 balance = balanceOf(_owner);
-        uint256[] memory lands = new uint256[](balance);
-        uint256 counter = 0;
+
+    function getLandsByOwner(address owner) public view returns (uint256[] memory) {
+        uint256 totalTokens = _tokenIds.current();
+        uint256[] memory result = new uint256[](totalTokens);
+        uint256 count = 0;
         
-        for (uint256 i = 1; i <= _tokenIds.current(); i++) {
-            if (_exists(i) && ownerOf(i) == _owner) {
-                lands[counter] = i;
-                counter++;
+        for (uint256 i = 1; i <= totalTokens; i++) {
+            if (_exists(i) && ownerOf(i) == owner) {
+                result[count] = i;
+                count++;
             }
         }
         
-        return lands;
+        uint256[] memory finalResult = new uint256[](count);
+        for (uint256 i = 0; i < count; i++) {
+            finalResult[i] = result[i];
+        }
+        
+        return finalResult;
     }
-    
-    function supportsInterface(bytes4 interfaceId) public view override(ERC721, AccessControlEnumerable) returns (bool) {
+
+    function getListedLands() public view returns (uint256[] memory) {
+        uint256 totalTokens = _tokenIds.current();
+        uint256[] memory result = new uint256[](totalTokens);
+        uint256 count = 0;
+        
+        for (uint256 i = 1; i <= totalTokens; i++) {
+            if (_exists(i) && lands[i].isListed) {
+                result[count] = i;
+                count++;
+            }
+        }
+        
+        uint256[] memory finalResult = new uint256[](count);
+        for (uint256 i = 0; i < count; i++) {
+            finalResult[i] = result[i];
+        }
+        
+        return finalResult;
+    }
+
+    function isRegistrar(address account) public view returns (bool) {
+        return hasRole(REGISTRAR_ROLE, account);
+    }
+
+    function totalLands() public view returns (uint256) {
+        return _tokenIds.current();
+    }
+
+    function _setTokenURI(uint256 tokenId, string memory _tokenURI) internal virtual {
+        _tokenURIs[tokenId] = _tokenURI;
+    }
+
+    function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
+        require(_exists(tokenId), "URI query for nonexistent token");
+        string memory _tokenURI = _tokenURIs[tokenId];
+        return _tokenURI;
+    }
+
+    function supportsInterface(bytes4 interfaceId) public view override(ERC721, AccessControl) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 }
