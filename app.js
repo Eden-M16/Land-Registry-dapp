@@ -122,7 +122,6 @@ async function initWeb3() {
 async function setupContract() {
     const config = await loadContractConfig();
     if (!config || !config.abi.length) {
-        // If ABI couldn't be fetched, we can't proceed
         console.error("Contract ABI missing");
         return;
     }
@@ -130,6 +129,22 @@ async function setupContract() {
     contract = new web3.eth.Contract(config.abi, config.address);
     document.getElementById('contractAddr').textContent = config.address;
     
+    // Check network
+    const chainId = await web3.eth.getChainId();
+    const networkBadge = document.querySelector('.status-badge');
+    if (chainId === 11155111) { // Sepolia
+        networkBadge.innerHTML = '<div class="status-dot" style="background: var(--accent-success);"></div> SEPOLIA_TESTNET_ACTIVE';
+        networkBadge.style.borderColor = 'var(--accent-success)';
+        networkBadge.style.color = 'var(--accent-success)';
+    } else if (chainId === 1337 || chainId === 31337) {
+        networkBadge.innerHTML = '<div class="status-dot"></div> LOCAL_NODE_ACTIVE';
+    } else {
+        networkBadge.innerHTML = '<div class="status-dot" style="background: var(--accent-danger);"></div> UNKNOWN_NETWORK_ID: ' + chainId;
+        networkBadge.style.borderColor = 'var(--accent-danger)';
+        networkBadge.style.color = 'var(--accent-danger)';
+        showToast("Please switch MetaMask to Sepolia", "error");
+    }
+
     await checkRoles();
     updateWalletUI();
     await refreshData();
@@ -222,25 +237,20 @@ async function refreshData() {
 
 async function loadStats() {
     try {
-        // This is a simplified way to get total count if your contract doesn't have a direct totalLands count
-        // For a real app, you'd use a Counter or a mapping
-        let totalCount = 0;
-        try {
-            // Placeholder: Assume token IDs start from 1
-            for(let i=1; i<100; i++) {
-                try {
-                    await contract.methods.ownerOf(i).call();
-                    totalCount++;
-                } catch(e) { break; }
-            }
-        } catch(e) {}
-        
+        const totalCount = await contract.methods.totalLands().call();
         document.getElementById('totalLands').textContent = totalCount.toString().padStart(2, '0');
         
         if (currentAccount) {
-            const myLands = await contract.methods.getLandsByOwner(currentAccount).call();
-            document.getElementById('yourLands').textContent = myLands.length.toString().padStart(2, '0');
+            try {
+                const myLands = await contract.methods.getLandsByOwner(currentAccount).call();
+                document.getElementById('yourLands').textContent = myLands.length.toString().padStart(2, '0');
+            } catch (e) { console.warn("getLandsByOwner missing, redeploy required"); }
         }
+
+        try {
+            const listedLands = await contract.methods.getListedLands().call();
+            document.getElementById('listedLands').textContent = listedLands.length.toString().padStart(2, '0');
+        } catch (e) { console.warn("getListedLands missing, redeploy required"); }
     } catch (e) { console.error("Stats error:", e); }
 }
 
@@ -290,7 +300,7 @@ function filterMarketplace() {
     
     list.innerHTML = filtered.map(item => `
         <div class="asset-card">
-            <div class="asset-tag">#${item.id}</div>
+            <div class="asset-tag status-listed">LISTED</div>
             <div class="asset-image-placeholder">
                 <i class="fas fa-map-marked-alt"></i>
             </div>
@@ -299,6 +309,10 @@ function filterMarketplace() {
                 <span class="asset-price">${item.priceEth} ETH</span>
             </div>
             <div class="asset-details" style="margin-bottom: 1.5rem;">
+                <div class="asset-detail-item">
+                    <i class="fas fa-barcode"></i>
+                    <span>TOKEN_ID: #${item.id}</span>
+                </div>
                 <div class="asset-detail-item">
                     <i class="fas fa-barcode"></i>
                     <span>PID: ${item.parcelId}</span>
@@ -331,7 +345,7 @@ async function loadMyLands() {
             const isListed = land.isListed;
             html += `
                 <div class="asset-card">
-                    <div class="asset-tag" style="background: ${isListed ? 'rgba(0, 245, 212, 0.1)' : 'rgba(67, 97, 238, 0.1)'}; color: ${isListed ? 'var(--accent-primary)' : 'var(--accent-secondary)'};">
+                    <div class="asset-tag ${isListed ? 'status-listed' : 'status-secured'}">
                         ${isListed ? 'LISTED' : 'SECURED'}
                     </div>
                     <div class="asset-image-placeholder">
@@ -451,12 +465,19 @@ async function viewLand() {
 
 async function inspectAsset(tokenId) {
     try {
-        const [land, history] = await Promise.all([
-            contract.methods.getLandDetails(tokenId).call(),
-            contract.methods.getTransactionHistory(tokenId).call()
-        ]);
+        let land, history;
+        try {
+            [land, history] = await Promise.all([
+                contract.methods.getLandDetails(tokenId).call(),
+                contract.methods.getTransactionHistory(tokenId).call()
+            ]);
+        } catch (contractError) {
+            console.warn("Contract helper failed, trying basic details:", contractError);
+            land = await contract.methods.getLandDetails(tokenId).call();
+            history = []; // Fallback to empty history if function missing
+        }
 
-        const priceEth = web3.utils.fromWei(land.price, 'ether');
+        const priceEth = web3.utils.fromWei(land.listedPrice, 'ether');
         const date = new Date(Number(land.timestamp) * 1000).toLocaleString();
         
         let historyHtml = '';

@@ -1,3 +1,34 @@
+npx hardhat run scripts/deploy.cjs --network sepolia
+.exit 
+console.log(deployer.address);
+const [deployer] = await ethers.getSigners();
+console.log("Is my wallet registrar?", isRegistrar);
+const isRegistrar = await landRegistry.isRegistrar(myWallet);
+const myWallet = "0xB88ba86BF853A14422a1Cd21221c8e59701b4A78";
+const fs = require("fs");
+const hre = require("hardhat");
+console.log("Contract attached at:", address);
+const landRegistry = await LandRegistry.attach(address);
+const LandRegistry = await hre.ethers.getContractFactory("LandRegistry");
+// Get contract instance
+const { address } = JSON.parse(fs.readFileSync("contract-address.json"));
+// Read contract address from file
+const fs = require("fs");
+const hre = require("hardhat");
+console.log("Contract attached at:", address);
+const landRegistry = await LandRegistry.attach(address);
+const LandRegistry = await hre.ethers.getContractFactory("LandRegistry");
+// Get contract instance
+const { address } = JSON.parse(fs.readFileSync("contract-address.json"));
+// Read contract address from file
+const fs = require("fs");
+const hre = require("hardhat");
+// Load Hardhat environment
+console.log("Is this wallet registrar?", isRegistrar);
+);  "0xB88ba86BF853A14422a1Cd21221c8e59701b4A78"  REGISTRAR_ROLE, const isRegistrar = await landRegistry.hasRole(
+const REGISTRAR_ROLE = await landRegistry.REGISTRAR_ROLE();
+const landRegistry = await LandRegistry.attach("YOUR_CONTRACT_ADDRESS"); // replace with deployed address
+const LandRegistry = await ethers.getContractFactory("LandRegistry");
 .exit
 console.log("Your ETH balance:", ethers.utils.formatEther(balance), "ETH");
 const balance = await ethers.provider.getBalance(yourWallet);
@@ -18,4 +49,4 @@ console.log(Object.keys(landRegistry.interface.functions))
 const totalSupply = await landRegistry.totalSupply()
 await landRegistry.getLandDetails(1)
 landRegistry = await (await ethers.getContractFactory("LandRegistry")).attach("0x5FbDB2315678afecb367f032d93F642f64180aa3");
-const landRegistry = await (await ethers.getContractFactory("LandRegistry")).attach("0x5FbDB2315678afecb367f032d93F642f64180aa3");
+const landRegistry = await (await ethers.getContractFactory("LandRegistry")).attach("0x5FbDB2315678afecb367f032d93F642f64180aa3");bDB2315678afecb367f032d93F642f64180aa3");

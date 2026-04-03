@@ -24,8 +24,16 @@ contract LandRegistry is ERC721, AccessControl {
         uint256 timestamp;
     }
 
+    struct Transaction {
+        address from;
+        address to;
+        uint256 price;
+        uint256 timestamp;
+    }
+
     mapping(uint256 => Land) public lands;
     mapping(uint256 => string) private _tokenURIs;
+    mapping(uint256 => Transaction[]) private _transactionHistory;
 
     event LandRegistered(uint256 indexed tokenId, address indexed owner, string location, uint256 area);
     event LandListed(uint256 indexed tokenId, uint256 price);
@@ -33,9 +41,15 @@ contract LandRegistry is ERC721, AccessControl {
     event LandTransferred(uint256 indexed tokenId, address indexed from, address indexed to);
     event LandSold(uint256 indexed tokenId, address indexed seller, address indexed buyer, uint256 price);
 
-    constructor() ERC721("LandChain", "LAND") {
-        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _grantRole(REGISTRAR_ROLE, msg.sender);
+    constructor(address adminWallet) ERC721("LandChain", "LAND") {
+        require(adminWallet != address(0), "Invalid admin wallet");
+        _grantRole(DEFAULT_ADMIN_ROLE, adminWallet);
+        _grantRole(REGISTRAR_ROLE, adminWallet);
+    }
+
+    modifier onlyRegistrar() {
+        require(hasRole(REGISTRAR_ROLE, msg.sender), "Only registrar can call");
+        _;
     }
 
     function registerLand(
@@ -44,7 +58,7 @@ contract LandRegistry is ERC721, AccessControl {
         uint256 area,
         string memory parcelId,
         string memory tokenURI
-    ) public onlyRole(REGISTRAR_ROLE) returns (uint256) {
+    ) public onlyRegistrar returns (uint256) {
         require(to != address(0), "Invalid recipient");
         require(bytes(location).length > 0, "Location required");
         require(area > 0, "Area must be > 0");
@@ -67,6 +81,13 @@ contract LandRegistry is ERC721, AccessControl {
             timestamp: block.timestamp
         });
 
+        _transactionHistory[newTokenId].push(Transaction({
+            from: address(0),
+            to: to,
+            price: 0,
+            timestamp: block.timestamp
+        }));
+
         emit LandRegistered(newTokenId, to, location, area);
         return newTokenId;
     }
@@ -74,19 +95,15 @@ contract LandRegistry is ERC721, AccessControl {
     function listForSale(uint256 tokenId, uint256 price) public {
         require(ownerOf(tokenId) == msg.sender, "Not the owner");
         require(price > 0, "Price must be > 0");
-        
         lands[tokenId].listedPrice = price;
         lands[tokenId].isListed = true;
-        
         emit LandListed(tokenId, price);
     }
 
     function delistLand(uint256 tokenId) public {
         require(ownerOf(tokenId) == msg.sender, "Not the owner");
-        
         lands[tokenId].listedPrice = 0;
         lands[tokenId].isListed = false;
-        
         emit LandDelisted(tokenId);
     }
 
@@ -95,26 +112,42 @@ contract LandRegistry is ERC721, AccessControl {
         require(land.isListed, "Land not for sale");
         require(msg.value >= land.listedPrice, "Insufficient payment");
         require(ownerOf(tokenId) != msg.sender, "Cannot buy own land");
-        
+
         address seller = ownerOf(tokenId);
-        
+        uint256 price = land.listedPrice;
+
         payable(seller).transfer(msg.value);
         _transfer(seller, msg.sender, tokenId);
-        
+
         land.owner = msg.sender;
         land.isListed = false;
         land.listedPrice = 0;
-        
+
+        _transactionHistory[tokenId].push(Transaction({
+            from: seller,
+            to: msg.sender,
+            price: price,
+            timestamp: block.timestamp
+        }));
+
         emit LandSold(tokenId, seller, msg.sender, msg.value);
     }
 
     function transferLand(uint256 tokenId, address newOwner) public {
         require(ownerOf(tokenId) == msg.sender, "Not the owner");
         require(newOwner != address(0), "Invalid address");
-        
-        _transfer(msg.sender, newOwner, tokenId);
+
+        address from = msg.sender;
+        _transfer(from, newOwner, tokenId);
         lands[tokenId].owner = newOwner;
-        
+
+        _transactionHistory[tokenId].push(Transaction({
+            from: from,
+            to: newOwner,
+            price: 0,
+            timestamp: block.timestamp
+        }));
+
         emit LandTransferred(tokenId, msg.sender, newOwner);
     }
 
@@ -139,6 +172,10 @@ contract LandRegistry is ERC721, AccessControl {
             land.isListed,
             land.timestamp
         );
+    }
+
+    function getTransactionHistory(uint256 tokenId) public view returns (Transaction[] memory) {
+        return _transactionHistory[tokenId];
     }
 
     function getLandsByOwner(address owner) public view returns (uint256[] memory) {
@@ -195,8 +232,7 @@ contract LandRegistry is ERC721, AccessControl {
 
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
         require(_exists(tokenId), "URI query for nonexistent token");
-        string memory _tokenURI = _tokenURIs[tokenId];
-        return _tokenURI;
+        return _tokenURIs[tokenId];
     }
 
     function supportsInterface(bytes4 interfaceId) public view override(ERC721, AccessControl) returns (bool) {
